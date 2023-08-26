@@ -4,10 +4,10 @@ import json
 # BASE_URL = "http://jaloliddin1006.jprq.live/api/v1"
 # BASE_URL = "http://husanibragimov.jprq.live/api/v1"
 
-
+BASE_URL = "http://127.0.0.1:8000/api/v1"
+# http://127.0.0.1:8000/api/v1/users/me/
 # login/?username=dekan1&password=Pass!123
 def login_user(username, password):
-    BASE_URL = "http://127.0.0.1:8000/api/v1"
     url = f"{BASE_URL}/login/"
     data = {
                 "username": username,
@@ -26,7 +26,7 @@ def login_user(username, password):
         }
         get_me = requests.get(get_me_url, headers=get_me_header)
         get_data = json.loads(get_me.text)['data']
-
+        id = get_data['id']
         username = get_data['username']
         role = get_data['role'][0]
         full_name = get_data['first_name']  + " " if get_data['first_name'] else " "
@@ -34,7 +34,7 @@ def login_user(username, password):
         full_name += get_data['middle_name'] if get_data['middle_name'] else " "
         # print(full_name)
         
-        return {'username':username, 'full_name':full_name, 'role':role, 'token':token} 
+        return {'id':id, 'username':username, 'full_name':full_name, 'role':role, 'token':token} 
     else:
         return 500
 
@@ -55,6 +55,10 @@ def login_user(username, password):
     #     return "Bazaga qo'shildi"
     # return "Foydalanuvchi mavjud"
 
+# def get_me_func(token):
+#     url = f"{BASE_URL}/users/me/"
+   
+
 
 # def create_feedback(body, user_id):
 #     url = f"{BASE_URL}/feedbacks"
@@ -70,5 +74,5 @@ def login_user(username, password):
 # create_user("jaloliddin1006", "Jaloliddin", "234234234")
 # print(create_feedback("yaxshi cabar keldi", "132133"))
 
-# a = login_user("student2", "Pass!123")
+# a = login_user("admin", "123")
 # print(a)
