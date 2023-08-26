@@ -13,8 +13,11 @@ async def on_startup(dispatcher):
     # Ma'lumotlar bazasini yaratamiz:
     try:
         db.create_table_users()
+        db.create_table_tiftusers()
     except Exception as err:
         print(err)
+        # pass
+
 
     # Bot ishga tushgani haqida adminga xabar berish
     await on_startup_notify(dispatcher)

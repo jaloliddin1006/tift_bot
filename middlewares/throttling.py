@@ -5,7 +5,8 @@ from aiogram.dispatcher import DEFAULT_RATE_LIMIT
 from aiogram.dispatcher.handler import CancelHandler, current_handler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.utils.exceptions import Throttled
-
+from loader import db
+import sqlite3
 
 class ThrottlingMiddleware(BaseMiddleware):
     """
@@ -18,6 +19,23 @@ class ThrottlingMiddleware(BaseMiddleware):
         super(ThrottlingMiddleware, self).__init__()
 
     async def on_process_message(self, message: types.Message, data: dict):
+        # print(message.from_user.full_name)
+        
+        user = message.from_user
+        old = db.select_bot_user(telegram_id = user.id)
+        if not old:
+            if user.username:
+                username = user.username
+            else:
+                username = None
+
+            try:
+                db.add_bot_user(telegram_id=user.id, name=user.full_name, user_name=username, language="uz")
+            except sqlite3.IntegrityError as err:
+                pass
+        else:
+            pass
+
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()
         if handler:
@@ -33,5 +51,44 @@ class ThrottlingMiddleware(BaseMiddleware):
             raise CancelHandler()
 
     async def message_throttled(self, message: types.Message, throttled: Throttled):
+
+        handler = current_handler.get()
+
+        dispatcher = Dispatcher.get_current()
+
+        if handler:
+
+            key = getattr(handler, 'throttling_key', f"{self.prefix}_{handler.__name__}")
+
+        else:
+
+            key = f"{self.prefix}_message"
+
+
+        # Calculate how many time is left till the block ends
+
+        delta = 1
+
+
+        # Prevent flooding
+
         if throttled.exceeded_count <= 2:
-            await message.reply("Too many requests!")
+
+            await message.reply('Too many requests! ')
+
+
+        # Sleep.
+
+            await asyncio.sleep(delta)
+
+
+        # Check lock status
+
+        thr = await dispatcher.check_key(key)
+
+
+        # If current message is not last with current key - do not send message
+
+        if thr.exceeded_count == throttled.exceeded_count:
+
+            await message.reply('Unlocked.')

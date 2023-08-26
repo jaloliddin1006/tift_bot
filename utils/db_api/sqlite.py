@@ -13,7 +13,7 @@ class Database:
         if not parameters:
             parameters = ()
         connection = self.connection
-        connection.set_trace_callback(logger)
+        # connection.set_trace_callback(logger)
         cursor = connection.cursor()
         data = None
         cursor.execute(sql, parameters)
@@ -29,15 +29,34 @@ class Database:
 
     def create_table_users(self):
         sql = """
-        CREATE TABLE Users (
-            id int NOT NULL,
-            Name varchar(255) NOT NULL,
-            email varchar(255),
-            language varchar(3),
-            PRIMARY KEY (id)
+        CREATE TABLE BotUsers(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            telegram_id integer NOT NULL,
+            name varchar(255) NOT NULL,
+            user_name varchar(255),
+            language varchar(15),
+            join_date varchar(60),
+            UNIQUE(telegram_id)
             );
 """
         self.execute(sql, commit=True)
+
+    def create_table_tiftusers(self):
+            sql = """              
+            CREATE TABLE TiftUsers(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT  NULL ,
+                username varchar(50)  NOT NULL ,
+                full_name varchar(100) NOT NULL ,
+                role varchar(25) NOT NULL,
+                join_date DATE,
+                update_date DATE,
+                token varchar(255) ,
+                FOREIGN KEY(user_id) REFERENCES BotUsers(telegram_id),
+                UNIQUE (username, token)
+                );
+    """
+            self.execute(sql, commit=True)
 
     @staticmethod
     def format_args(sql, parameters: dict):
@@ -46,46 +65,83 @@ class Database:
         ])
         return sql, tuple(parameters.values())
 
-    def add_user(self, id: int, name: str, email: str = None, language: str = 'uz'):
-        # SQL_EXAMPLE = "INSERT INTO Users(id, Name, email) VALUES(1, 'John', 'John@gmail.com')"
-
+    def add_bot_user(self, telegram_id: int, name: str, user_name: str = None, language: str = 'uz'):
         sql = """
-        INSERT INTO Users(id, Name, email, language) VALUES(?, ?, ?, ?)
+        INSERT INTO BotUsers(telegram_id, name, user_name, language, join_date) VALUES(?, ?, ?, ?, datetime('now'))
         """
-        self.execute(sql, parameters=(id, name, email, language), commit=True)
+        self.execute(sql, parameters=(telegram_id, name, user_name, language), commit=True)
 
-    def select_all_users(self):
-        sql = """
-        SELECT * FROM Users
+    def add_tift_user(self, user_id, username, full_name, role, token):
+        sql = " INSERT INTO  TiftUsers(user_id, username, full_name, role, token, join_date) VALUES(?, ?, ?, ?, ?, datetime('now'))"
+        self.execute(sql, parameters=(user_id, username, full_name, role, token), commit=True)
+
+    def select_bot_user(self, **kwargs):
+        sql = "SELECT * FROM BotUsers WHERE "
+        sql, parameters = self.format_args(sql, kwargs)
+        return self.execute(sql, parameters=parameters, fetchone=True)
+    
+    def select_tift_user(self, **kwargs):
+        sql = f"SELECT * FROM TiftUsers WHERE "
+        sql, parameters = self.format_args(sql, kwargs)
+        return self.execute(sql, parameters=parameters, fetchone=True)
+    
+    def update_tift_user(self, user_id, username, full_name, role, token):
+        sql = f"""
+        UPDATE TiftUsers SET username=?, full_name=?, role=?, token=?  WHERE user_id=?
+        """
+        return self.execute(sql, parameters=(username, full_name, role, token, user_id), commit=True)
+    
+    def logout_token(self, user_id, token):
+        sql = f"""
+        UPDATE TiftUsers SET token=?  WHERE user_id=?
+        """
+        return self.execute(sql, parameters=(token, user_id), commit=True)
+    
+    
+    
+    def select_all_users(self, table):
+        sql = f"""
+        SELECT * FROM {table}
         """
         return self.execute(sql, fetchall=True)
+    #
+    # def select_user(self, **kwargs):
+    #     # SQL_EXAMPLE = "SELECT * FROM Users where id=1 AND Name='John'"
+    #     sql = "SELECT * FROM Users WHERE "
+    #     sql, parameters = self.format_args(sql, kwargs)
+    #
+    #     return self.execute(sql, parameters=parameters, fetchone=True)
+    #
+    # def count_users(self):
+    #     return self.execute("SELECT COUNT(*) FROM Users;", fetchone=True)
+    #
+    # def update_user_email(self, email, id):
+    #     # SQL_EXAMPLE = "UPDATE Users SET email=mail@gmail.com WHERE id=12345"
+    #
+    #     sql = f"""
+    #     UPDATE Users SET email=? WHERE id=?
+    #     """
+    #     return self.execute(sql, parameters=(email, id), commit=True)
+    #
+    # def delete_users(self):
+    #     self.execute("DELETE FROM Users WHERE TRUE", commit=True)
+    #
 
-    def select_user(self, **kwargs):
-        # SQL_EXAMPLE = "SELECT * FROM Users where id=1 AND Name='John'"
-        sql = "SELECT * FROM Users WHERE "
-        sql, parameters = self.format_args(sql, kwargs)
-
-        return self.execute(sql, parameters=parameters, fetchone=True)
-
-    def count_users(self):
-        return self.execute("SELECT COUNT(*) FROM Users;", fetchone=True)
-
-    def update_user_email(self, email, id):
-        # SQL_EXAMPLE = "UPDATE Users SET email=mail@gmail.com WHERE id=12345"
-
-        sql = f"""
-        UPDATE Users SET email=? WHERE id=?
-        """
-        return self.execute(sql, parameters=(email, id), commit=True)
-
-    def delete_users(self):
-        self.execute("DELETE FROM Users WHERE TRUE", commit=True)
+# def logger(statement):
+#     print(f"""
+# _____________________________________________________
+# Executing:
+# {statement}
+# _____________________________________________________
+# """)
 
 
-def logger(statement):
-    print(f"""
-_____________________________________________________        
-Executing: 
-{statement}
-_____________________________________________________
-""")
+#
+# SELECT *
+# FROM table1 INNER JOIN table2
+# ON table1.column_name = table2.column_name;
+
+
+# db = Database()
+# user = db.select_all_bot_users()
+# print(user)
