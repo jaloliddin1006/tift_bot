@@ -45,6 +45,7 @@ class Database:
             sql = """              
             CREATE TABLE TiftUsers(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                lms_id INTEGER NOT NULL,
                 user_id INTEGER NOT  NULL ,
                 username varchar(50)  NOT NULL ,
                 full_name varchar(100) NOT NULL ,
@@ -53,7 +54,7 @@ class Database:
                 update_date DATE,
                 token varchar(255) ,
                 FOREIGN KEY(user_id) REFERENCES BotUsers(telegram_id),
-                UNIQUE (username, token)
+                UNIQUE (user_id, username, token)
                 );
     """
             self.execute(sql, commit=True)
@@ -71,9 +72,9 @@ class Database:
         """
         self.execute(sql, parameters=(telegram_id, name, user_name, language), commit=True)
 
-    def add_tift_user(self, user_id, username, full_name, role, token):
-        sql = " INSERT INTO  TiftUsers(user_id, username, full_name, role, token, join_date) VALUES(?, ?, ?, ?, ?, datetime('now'))"
-        self.execute(sql, parameters=(user_id, username, full_name, role, token), commit=True)
+    def add_tift_user(self, lms_id, user_id, username, full_name, role, token):
+        sql = " INSERT INTO  TiftUsers(lms_id, user_id, username, full_name, role, token, join_date) VALUES(?, ?, ?, ?, ?, ?, datetime('now'))"
+        self.execute(sql, parameters=(lms_id, user_id, username, full_name, role, token), commit=True)
 
     def select_bot_user(self, **kwargs):
         sql = "SELECT * FROM BotUsers WHERE "
@@ -85,11 +86,11 @@ class Database:
         sql, parameters = self.format_args(sql, kwargs)
         return self.execute(sql, parameters=parameters, fetchone=True)
     
-    def update_tift_user(self, user_id, username, full_name, role, token):
+    def update_tift_user(self, lms_id, user_id, username, full_name, role, token):
         sql = f"""
-        UPDATE TiftUsers SET username=?, full_name=?, role=?, token=?  WHERE user_id=?
+        UPDATE TiftUsers SET lms_id=?, username=?, full_name=?, role=?, token=?  WHERE user_id=?
         """
-        return self.execute(sql, parameters=(username, full_name, role, token, user_id), commit=True)
+        return self.execute(sql, parameters=(lms_id, username, full_name, role, token, user_id), commit=True)
     
     def logout_token(self, user_id, token):
         sql = f"""
@@ -97,14 +98,28 @@ class Database:
         """
         return self.execute(sql, parameters=(token, user_id), commit=True)
     
-    
-    
     def select_all_users(self, table):
         sql = f"""
         SELECT * FROM {table}
         """
         return self.execute(sql, fetchall=True)
+    
+    
+    def update_lang(self, lang, user_id):
+        sql = f"""
+        UPDATE BotUsers SET language=? WHERE telegram_id=?
+        """
+        return self.execute(sql, parameters=(lang, user_id), commit=True)
     #
+# SELECT *
+# FROM table1 INNER JOIN table2
+# ON table1.column_name = table2.column_name;
+    def select_user_all_data(self, **kwargs):
+        sql = f"SELECT * FROM BotUsers INNER JOIN TiftUsers ON BotUsers.telegram_id = TiftUsers.user_id WHERE "
+        sql, parameters = self.format_args(sql, kwargs)
+        return self.execute(sql, parameters=parameters, fetchone=True)
+    
+    
     # def select_user(self, **kwargs):
     #     # SQL_EXAMPLE = "SELECT * FROM Users where id=1 AND Name='John'"
     #     sql = "SELECT * FROM Users WHERE "
