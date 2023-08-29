@@ -5,6 +5,8 @@ from aiogram.dispatcher import DEFAULT_RATE_LIMIT
 from aiogram.dispatcher.handler import CancelHandler, current_handler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.utils.exceptions import Throttled
+from data.api import check_user
+from keyboards.default.defoult_btn import login_menu
 from loader import db
 import sqlite3
 
@@ -34,7 +36,17 @@ class ThrottlingMiddleware(BaseMiddleware):
             except sqlite3.IntegrityError as err:
                 pass
         else:
-            pass
+            user = db.select_tift_user(user_id = message.from_user.id)
+            if user:
+                token = user[8]
+                # token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDUxNjA4LCJpYXQiOjE2OTIzNjUyMDgsImp0aSI6IjY3ZjE1NmI1NzA3ZTRmMDZiNjg5NmY0YjdhMWE0ZjhkIiwidXNlcl9pZCI6NH0.WZwuayZdLJ1Au2c-XBoF_e-2sgSJHIouO9uisaw8T6g"
+                if token:
+                    get_user = check_user(token)
+                    if get_user != 200:
+                        db.logout_token(user_id=message.from_user.id, token=None)
+                        await message.answer("LMS bilan aloqa uzuldi, qaytadan login qiling. 👉 /login", reply_markup=login_menu(user=False))
+            
+            
 
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()

@@ -3,10 +3,9 @@ import json
 
 # BASE_URL = "http://jaloliddin1006.jprq.live/api/v1"
 # BASE_URL = "http://husanibragimov.jprq.live/api/v1"
-
+# BASE_URL = "http://oqdevpy.jprq.live/api/v1"
 BASE_URL = "http://127.0.0.1:8000/api/v1"
-# http://127.0.0.1:8000/api/v1/users/me/
-# login/?username=dekan1&password=Pass!123
+
 def login_user(username, password):
     url = f"{BASE_URL}/login/"
     data = {
@@ -38,26 +37,136 @@ def login_user(username, password):
     else:
         return 500
 
-    # data_ = json.loads(response.text)[0]
-    # is_user = False
-    # for i in data_:
-    #     if i["user_id"] == user_id:
-    #         is_user = True
-    #         break
-    #
-    # if not is_user:
-    #     data = {
-    #         "username": username,
-    #         "name": name,
-    #         "user_id": user_id,
-    #     }
-    #     post = requests.post(url=url, data=data)
-    #     return "Bazaga qo'shildi"
-    # return "Foydalanuvchi mavjud"
+def check_user(token):
+    url = f"{BASE_URL}/users/me/"
+    get_me_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_me = requests.get(url, headers=get_me_header)
+    return get_me.status_code
 
-# def get_me_func(token):
-#     url = f"{BASE_URL}/users/me/"
-   
+
+def get_student(token):
+    url = f"{BASE_URL}/student/student-detail/"
+    get_me_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_me = requests.get(url, headers=get_me_header)
+    get_data = json.loads(get_me.text)['result']
+    full_name = get_data['full_name']
+    direction = get_data['direction']
+    birthday = get_data['birthday']
+    course_number = get_data['course_number']
+    academic_group = get_data['academic_group']
+    tutor = get_data['tutor']
+    rating_notebook = get_data['rating_notebook']
+    try:
+        gpa = get_data['gpa', 0] 
+    except:
+        gpa = 0
+        
+    context = {
+        'full_name':full_name,
+        'direction':direction,
+        'birthday':birthday,
+        'course_number':course_number,
+        'academic_group':academic_group,
+        'tutor':tutor,
+        'rating_notebook':rating_notebook,
+        'gpa':gpa,
+    }
+    return context
+
+
+def get_rating_notebook(token):
+    url = f"{BASE_URL}/student/rating-notebook/"
+    get_me_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_me = requests.get(url, headers=get_me_header)
+    get_data = json.loads(get_me.text)
+    student = get_data['student']
+    sciences = get_data['results']
+    context = {
+        'student':student,
+        'sciences':sciences,
+        
+    }
+    return context
+
+
+def get_student_schedule(token):
+    url = f"{BASE_URL}/student/schedule-table/"
+    para_url = f"{BASE_URL}/bot/para/"
+    get_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_ = requests.get(url, headers=get_header)
+    get_data = json.loads(get_.text)
+ 
+    return get_data
+
+
+
+def get_student_sciences(token):
+    url = f"{BASE_URL}/student/my-sciences" ## last semester
+    get_me_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_me = requests.get(url, headers=get_me_header)
+    get_data = json.loads(get_me.text)
+    student = get_data['full_name']
+    sciences = get_data['science']
+    context = {
+        'student':student,
+        'sciences':sciences,
+        
+    }
+    return context
+
+
+def get_notifications(token):
+    url = f"{BASE_URL}/student/notifications/" ## last 7 days
+    get_me_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_me = requests.get(url, headers=get_me_header)
+    if get_me.status_code == 200:
+        get_data = json.loads(get_me.text)
+        return get_data
+    return []
+
+
+
+
+
+def get_teacher_groups(token):
+    url = f"{BASE_URL}/teacher/groups-list/" ## last semester
+    get_me_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_me = requests.get(url, headers=get_me_header)
+    get_data = json.loads(get_me.text)
+
+    return get_data
+
+
+def get_teacher_schedule(token):
+    url = f"{BASE_URL}/teacher/schedule/" ## last semester
+    get_me_header = {
+            'Authorization': f"Bearer {token}",
+        }
+    get_me = requests.get(url, headers=get_me_header)
+    get_data = json.loads(get_me.text)
+    return get_data
+
+
+
+
+
+
+
+
 
 
 # def create_feedback(body, user_id):

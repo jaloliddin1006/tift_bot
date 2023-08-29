@@ -1,0 +1,56 @@
+from aiogram import types
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.builtin import Command
+from data.config import GroupID
+from handlers.users.start import IsTiftUser
+from keyboards.default.defoult_btn import message_phone, login_menu
+from loader import dp, db, bot
+
+
+@dp.message_handler(text = '📨 Xabar yozish')
+async def message_write(message: types.Message, state: FSMContext):
+    await message.answer("Ism Familiyangizni yuboring", reply_markup=types.ReplyKeyboardRemove())
+    await state.set_state("full_name")
+
+
+@dp.message_handler(state="full_name")
+async def get_full_name(message: types.Message, state: FSMContext):
+    full_name = message.text
+    await state.update_data(full_name=full_name)
+    await message.answer(f"Telefon raqamingizni yuboring", reply_markup=message_phone)
+    await state.set_state("phone")
+    
+
+
+@dp.message_handler(state="phone", content_types=types.ContentType.CONTACT)
+async def get_phone(message: types.Message, state: FSMContext):
+    phone = message.contact.phone_number    
+    await state.update_data(phone=phone)
+    await message.answer(f"Xabar/Ariza matningizni kiriting:", reply_markup=types.ReplyKeyboardRemove())
+    await state.set_state("message")
+
+
+@dp.message_handler(state="message")
+async def send_message(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    data = await state.get_data()
+    full_name = data['full_name']
+    phone = data['phone']
+    msg = message.text
+    msg_id = message.message_id
+    
+    txt = f"ID: #{msg_id}#\n"
+    txt += f"User: {full_name}\n"
+    txt += f"Phone: {phone}\n"
+    txt += f"Message: {full_name}\n"
+    msg = db.add_message(user_id, full_name, msg_id)
+    
+    await bot.send_message(chat_id=GroupID, message_thread_id=2704, text=txt)
+    await message.answer(txt)
+    await message.answer(f"Xabaringiz yuborildi", reply_markup=login_menu(user=IsTiftUser(user_id)))
+    await state.finish()
+    
+
+
+
+

@@ -13,23 +13,40 @@ from keyboards.default.defoult_btn import login_menu
 from keyboards.inline.inline_btn import language_btn, lang_code
 
 
+def IsTiftUser(tg_id):
+    user = db.select_tift_user(user_id=tg_id)  
+    if user:
+        if user[-1]:
+            return True  
+    return False
+
 
 @dp.message_handler(CommandStart())
 async def bot_start(message: types.Message):
-    user = db.select_tift_user(user_id=message.from_user.id)  
-    if user:
-        isUser = True  
-    else:
-        isUser = False
-    await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=isUser))
+    user_id = message.from_user.id    
+    await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
     # all = db.select_user_all_data(telegram_id=message.from_user.id)
     # await message.answer(all)
 
 
 
+# @dp.message_handler()
+# async def bot_start(message: types.Message):
+#     user_id = message.from_user.id 
+    
+#     await bot.send_message(chat_id="@new_bot_test_group", text=message.text)
+#     await bot.send_message(chat_id="-1001704364861", message_thread_id="2704", text=message.text)
+#     await bot.send_message(chat_id="-1001704364861/2704", text="🔵🔵🔵sdfsdfsd🌀🌀🌀🌀sdfsdf🎮🎮🎮sdf    🔔")
+#     # await bot.send_message
+    
+#     await message.answer("Xush kelibsiz!")
+#     # all = db.select_user_all_data(telegram_id=message.from_user.id)
+#     # await message.answer(all)
+
+
 @dp.message_handler(Command("login"))
 async def input_login(message: types.Message, state: FSMContext):
-    await message.answer("LMS tizimiga kirishingiz uchun LOGIN yuboring\n")
+    await message.answer("LMS tizimiga kirishingiz uchun LOGIN yuboring\n", reply_markup=types.ReplyKeyboardRemove())
     await state.set_state("login")
 
 
@@ -45,7 +62,7 @@ async def input_password(message: types.Message, state: FSMContext):
 @dp.message_handler(state="password")
 async def login_user_func(message: types.Message, state: FSMContext):
     await state.update_data(password=message.text)
-    
+    await message.delete()
     data = await state.get_data()
     req = login_user(data['login'], data['password'])
     await state.finish()
@@ -65,10 +82,11 @@ async def login_user_func(message: types.Message, state: FSMContext):
             if not user:
             
                 db.add_tift_user(lms_id=lms_id, user_id=user_id, username=username, full_name=full_name, role=role, token=token)
-                await message.answer(f"{req['full_name']} - tizimga muvaffaqiyatli bog'landingiz ✅",reply_markup=login_menu(user=True))
+                msg = await message.answer(f"{req['full_name']} - tizimga muvaffaqiyatli bog'landingiz ✅",reply_markup=login_menu(user=True))
             else:
                 db.update_tift_user(lms_id=lms_id, user_id=user_id, username=username, full_name=full_name, role=role, token=token)
-                await message.answer(f"{req['full_name']} - sifatida tizimga kirdingiz ✅",reply_markup=login_menu(user=True))
+                msg = await message.answer(f"{req['full_name']} - sifatida tizimga kirdingiz ✅",reply_markup=login_menu(user=True))
+            # await bot.pin_chat_message(chat_id=message.chat.id, message_id=msg.message_id, disable_notification=True, timeout=None)
         else:
             await message.answer("Siz uchun ushbu botning vazifalari to'g'ri kelmaydi. ", reply_markup=login_menu())
 
@@ -78,7 +96,7 @@ async def logout_user(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     user = db.select_tift_user(user_id=user_id)
     db.logout_token(token=None, user_id=user_id)
-    await message.answer(f"{user[3]} -  tizimdan muvaffaqiyatli chiqdingiz")
+    await message.answer(f"{user[3]} -  tizimdan muvaffaqiyatli chiqdingiz",reply_markup=login_menu(user=False))
     
     
     
@@ -96,7 +114,9 @@ async def change_lang_(query: types.CallbackQuery, callback_data: dict):
     lang = callback_data['language']
     db.update_lang(lang, query.from_user.id)
     await query.answer("til o'zgartirildi ")
-    await query.message.answer("til o'zgartirildi", reply_markup=login_menu(1))
+    
+    user_id = query.from_user.id
+    await query.message.answer("til o'zgartirildi", reply_markup=login_menu(user=IsTiftUser(user_id)))
     await query.message.delete()
 
 

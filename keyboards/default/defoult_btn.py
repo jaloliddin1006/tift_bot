@@ -15,7 +15,7 @@ def login_menu(user=False):
                 KeyboardButton(text="🌐 Tilni o'zgartirish"),           
             ],
             [
-                KeyboardButton(text="📝 Xabar yozish"), 
+                KeyboardButton(text="📨 Xabar yozish"), 
             ],
             loginusermenu,
             [
@@ -67,6 +67,9 @@ def user_menu_func(user):
                     KeyboardButton(text="🎓 Individual shaxsiy reja"), 
                     KeyboardButton(text="⚖️ GPA"), 
                     ],
+                 [
+                    KeyboardButton(text="ℹ️ Ma'lumotlarim"), 
+                    ],
                 
                 [
                     KeyboardButton(text="🔙 Ortga"), 
@@ -84,7 +87,7 @@ def user_menu_func(user):
                     KeyboardButton(text="👥 Meni Guruhlarim"),              
                     ],
                 [
-                    KeyboardButton(text="📆 Dars jadvalim"), 
+                    KeyboardButton(text="📅 Dars jadvalim"), 
                     ],
                 [
                     KeyboardButton(text="⚠️ Tekshirilmagan vazifalarim"), 
@@ -100,7 +103,20 @@ def user_menu_func(user):
     return user_menu
 
 
+message_phone = ReplyKeyboardMarkup(
+        keyboard=[
+            
+            [
+                KeyboardButton(text="☎️ Telefon raqamni ulashish", request_contact=True),              
+                ],
+            [
+                KeyboardButton(text="🔙 Ortga"), 
+                ],
+        ],
+        resize_keyboard=True,
+        input_field_placeholder="Phone number is required"
 
+    )
 
 
 def eslatmani_yoqish(aa):

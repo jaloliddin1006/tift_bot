@@ -58,6 +58,18 @@ class Database:
                 );
     """
             self.execute(sql, commit=True)
+    def create_table_messages(self):
+        sql = """
+        CREATE TABLE Messages(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            telegram_id integer NOT NULL,
+            name varchar(255) NOT NULL,
+            msg_id varchar(25),
+            create_date varchar(60)
+            );
+"""
+        self.execute(sql, commit=True)
+
 
     @staticmethod
     def format_args(sql, parameters: dict):
@@ -72,6 +84,12 @@ class Database:
         """
         self.execute(sql, parameters=(telegram_id, name, user_name, language), commit=True)
 
+    def add_message(self, telegram_id: int, name: str, msg_id: str):
+        sql = """
+        INSERT INTO Messages(telegram_id, name, msg_id, create_date) VALUES(?, ?, ?, datetime('now'))
+        """
+        self.execute(sql, parameters=(telegram_id, name, msg_id), commit=True)
+
     def add_tift_user(self, lms_id, user_id, username, full_name, role, token):
         sql = " INSERT INTO  TiftUsers(lms_id, user_id, username, full_name, role, token, join_date) VALUES(?, ?, ?, ?, ?, ?, datetime('now'))"
         self.execute(sql, parameters=(lms_id, user_id, username, full_name, role, token), commit=True)
@@ -83,6 +101,11 @@ class Database:
     
     def select_tift_user(self, **kwargs):
         sql = f"SELECT * FROM TiftUsers WHERE "
+        sql, parameters = self.format_args(sql, kwargs)
+        return self.execute(sql, parameters=parameters, fetchone=True)
+    
+    def select_message(self, **kwargs):
+        sql = f"SELECT * FROM Messages WHERE "
         sql, parameters = self.format_args(sql, kwargs)
         return self.execute(sql, parameters=parameters, fetchone=True)
     
@@ -110,10 +133,7 @@ class Database:
         UPDATE BotUsers SET language=? WHERE telegram_id=?
         """
         return self.execute(sql, parameters=(lang, user_id), commit=True)
-    #
-# SELECT *
-# FROM table1 INNER JOIN table2
-# ON table1.column_name = table2.column_name;
+
     def select_user_all_data(self, **kwargs):
         sql = f"SELECT * FROM BotUsers INNER JOIN TiftUsers ON BotUsers.telegram_id = TiftUsers.user_id WHERE "
         sql, parameters = self.format_args(sql, kwargs)
@@ -138,9 +158,9 @@ class Database:
     #     """
     #     return self.execute(sql, parameters=(email, id), commit=True)
     #
-    # def delete_users(self):
-    #     self.execute("DELETE FROM Users WHERE TRUE", commit=True)
-    #
+    def drop_message(self):
+        self.execute("DROP TABLE Messages", commit=True)
+    
 
 # def logger(statement):
 #     print(f"""
