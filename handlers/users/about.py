@@ -17,6 +17,7 @@ from keyboards.inline.inline_btn import language_btn, lang_code
 @dp.message_handler(text = "🔙 Ortga")
 async def bot_start(message: types.Message):
     user_id = message.from_user.id
+
     await message.answer("Asosiy menu", reply_markup=login_menu(user=IsTiftUser(user_id)))
 
 

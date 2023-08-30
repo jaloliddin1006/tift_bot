@@ -3,16 +3,23 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command
 from data.config import GroupID
 from handlers.users.start import IsTiftUser
-from keyboards.default.defoult_btn import message_phone, login_menu
+from keyboards.default.defoult_btn import message_phone, login_menu, back_btn
 from loader import dp, db, bot
 
 
 @dp.message_handler(text = '📨 Xabar yozish')
 async def message_write(message: types.Message, state: FSMContext):
-    await message.answer("Ism Familiyangizni yuboring", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Ism Familiyangizni yuboring", reply_markup=back_btn)
     await state.set_state("full_name")
 
 
+@dp.message_handler(state="full_name", text ="🔙 Ortga")
+async def input_password(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id   
+    await state.finish()
+    await message.answer(f"Asosiy sahifa",reply_markup=login_menu(user=IsTiftUser(user_id)))
+    
+    
 @dp.message_handler(state="full_name")
 async def get_full_name(message: types.Message, state: FSMContext):
     full_name = message.text
@@ -21,6 +28,12 @@ async def get_full_name(message: types.Message, state: FSMContext):
     await state.set_state("phone")
     
 
+@dp.message_handler(state="phone", text ="🔙 Ortga")
+async def input_password(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id   
+    await state.finish()
+    await message.answer(f"Asosiy sahifa",reply_markup=login_menu(user=IsTiftUser(user_id)))
+    
 
 @dp.message_handler(state="phone", content_types=types.ContentType.CONTACT)
 async def get_phone(message: types.Message, state: FSMContext):
@@ -28,6 +41,12 @@ async def get_phone(message: types.Message, state: FSMContext):
     await state.update_data(phone=phone)
     await message.answer(f"Xabar/Ariza matningizni kiriting:", reply_markup=types.ReplyKeyboardRemove())
     await state.set_state("message")
+
+@dp.message_handler(state="phone")
+async def get_phone(message: types.Message, state: FSMContext):
+    await message.answer("Quidagi tugma yordamida telefon raqamingizni yuboring👇", reply_markup=message_phone)
+    await state.set_state("phone")
+    
 
 
 @dp.message_handler(state="message")
@@ -42,7 +61,7 @@ async def send_message(message: types.Message, state: FSMContext):
     txt = f"ID: #{msg_id}#\n"
     txt += f"User: {full_name}\n"
     txt += f"Phone: {phone}\n"
-    txt += f"Message: {full_name}\n"
+    txt += f"Message: {msg}\n"
     msg = db.add_message(user_id, full_name, msg_id)
     
     await bot.send_message(chat_id=GroupID, message_thread_id=2704, text=txt)

@@ -3,7 +3,11 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def login_menu(user=False):
     loginusermenu = []
-    if user:
+    if user == "admin":
+        loginusermenu =   [
+                KeyboardButton(text="👤 Admin menu"), 
+            ]
+    elif user: 
         loginusermenu =   [
                 KeyboardButton(text="👤 User menu"), 
             ]
@@ -79,7 +83,7 @@ def user_menu_func(user):
             input_field_placeholder="Talaba Menusi"
 
         )
-    else:
+    elif user == "teacher":
          user_menu = ReplyKeyboardMarkup(
             keyboard=[
                 
@@ -100,9 +104,57 @@ def user_menu_func(user):
             input_field_placeholder="O'qituvchi Menusi"
 
         )
+    elif user == "tutor":
+         user_menu = ReplyKeyboardMarkup(
+            keyboard=[
+                
+                [
+                    KeyboardButton(text="👥 Meni Guruhlarim"),              
+                    ],
+                [
+                    KeyboardButton(text="🔙 Ortga"), 
+                    ],
+            ],
+            resize_keyboard=True,
+            input_field_placeholder="O'qituvchi Menusi"
+
+        )
+    else:
+                 user_menu = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="🔙 Ortga"), 
+                    ],
+            ],
+            resize_keyboard=True,
+            input_field_placeholder="O'qituvchi Menusi"
+
+        )
+        
     return user_menu
 
+admin_menu = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="✍🏻 Xabar yozish"), 
+                    KeyboardButton(text="⏩ Reklama (Forward)"), 
+                    ],
+                  [
+                    KeyboardButton(text="👯‍♂️ All Users"), 
+                    KeyboardButton(text="📊 Statistika"), 
+                    ],
+                [
+                    KeyboardButton(text="⚜️ All Channels (Groups)"), 
+                    KeyboardButton(text="➕ Add Channels (Groups)"), 
+                    ],
+                [
+                    KeyboardButton(text="🔙 Ortga"), 
+                    ],
+            ],
+            resize_keyboard=True,
+            input_field_placeholder="O'qituvchi Menusi"
 
+        )
 message_phone = ReplyKeyboardMarkup(
         keyboard=[
             
@@ -117,7 +169,16 @@ message_phone = ReplyKeyboardMarkup(
         input_field_placeholder="Phone number is required"
 
     )
+back_btn = ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text="🔙 Ortga"), 
+                ],
+        ],
+        resize_keyboard=True,
+        input_field_placeholder="Your full name ..."
 
+    )
 
 def eslatmani_yoqish(aa):
     eslatma = ReplyKeyboardMarkup(
