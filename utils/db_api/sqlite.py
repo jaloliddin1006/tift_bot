@@ -70,6 +70,18 @@ class Database:
 """
         self.execute(sql, commit=True)
 
+    def create_table_channels(self):
+        sql = """
+        CREATE TABLE Channels (
+        channel_id INTEGER PRIMARY KEY,
+        channel_name VARCHAR(255) NOT NULL,
+        username VARCHAR(255) ,
+        channel_link VARCHAR(255) NOT NULL,
+        adding_member integer
+       
+            );
+"""
+        self.execute(sql, commit=True)
 
     @staticmethod
     def format_args(sql, parameters: dict):
@@ -139,7 +151,6 @@ class Database:
         sql, parameters = self.format_args(sql, kwargs)
         return self.execute(sql, parameters=parameters, fetchone=True)
     
-    
     # def select_user(self, **kwargs):
     #     # SQL_EXAMPLE = "SELECT * FROM Users where id=1 AND Name='John'"
     #     sql = "SELECT * FROM Users WHERE "
@@ -160,8 +171,48 @@ class Database:
     #
     def drop_message(self):
         self.execute("DROP TABLE Messages", commit=True)
-    
 
+
+    def add_channel(self, channel_id, username, channel_name, channel_link):
+        sql = " INSERT INTO  Channels(channel_id, username, channel_name, channel_link, adding_member) VALUES(?, ?, ?, ?, 0)"
+        self.execute(sql, parameters=( channel_id, username, channel_name, channel_link), commit=True)
+    
+    def select_all_channels(self):
+        sql = f"""
+        SELECT * FROM Channels
+        """
+        return self.execute(sql, fetchall=True)
+    
+        
+    def select_channel(self, **kwargs):
+        sql = f"SELECT * FROM Channels WHERE "
+        sql, parameters = self.format_args(sql, kwargs)
+        return self.execute(sql, parameters=parameters, fetchone=True)
+    
+    def update_member_count(self, adding_member, channel_id):
+        sql = f"""
+        UPDATE Channels SET adding_member=? WHERE channel_id=?
+        """
+        return self.execute(sql, parameters=(adding_member, channel_id), commit=True)
+
+    def delete_channel(self,  **kwargs):
+        sql = f"""
+        DELETE Channels where 
+        """
+        sql, parameters = self.format_args(sql, kwargs)
+        return self.execute(sql, parameters=parameters, commit=True)
+    
+    def drop_channels(self):
+        self.execute("DROP TABLE Channels", commit=True)
+
+
+    
+    # CREATE TABLE Channels (
+    #     channel_id INTEGER PRIMARY KEY,
+    #     channel_name VARCHAR(255) NOT NULL,
+    #     channel_link VARCHAR(255) NOT NULL,
+    #     adding_member integer
+       
 # def logger(statement):
 #     print(f"""
 # _____________________________________________________

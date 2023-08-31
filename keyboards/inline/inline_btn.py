@@ -20,15 +20,18 @@ language_btn = InlineKeyboardMarkup(
 	],
 ])
 
-# def shahar_btn_yasash(shaharlar_data):
-# 	# print(call_1)
 
 
-# 	shaharlar_btn = InlineKeyboardMarkup(row_width=2)
-
-# 	for key, value in shaharlar_data.items():
-# 	    shaharlar_btn.insert(InlineKeyboardButton(text=key, callback_data=value))
-#     return shaharlar_btn
-
+def check_member_button(channels):
+    
+    channels_check = InlineKeyboardMarkup(row_width=1)
+    for channel in channels:
+        if channel[2]==0:
+            channels_check.insert(InlineKeyboardButton(text=f"{channel[1]}", url=f"{channel[0]}"))
+        else:
+            channels_check.insert(InlineKeyboardButton(text=f"✅{channel[1]}", url=f"{channel[0]}"))
+    channels_check.add(InlineKeyboardButton(text=f"✅ Obunani tekshirish ✅ ", callback_data=f"check_subs"))
+        
+    return channels_check
 
 

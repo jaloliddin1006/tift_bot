@@ -1,5 +1,6 @@
 from . import help
 from . import admin
+from . import channels
 from . import start
 from . import message
 from . import about

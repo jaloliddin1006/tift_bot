@@ -10,7 +10,7 @@ from loader import dp, db, bot
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command
 from keyboards.default.defoult_btn import login_menu, back_btn  
-from keyboards.inline.inline_btn import language_btn, lang_code
+from keyboards.inline.inline_btn import language_btn, lang_code, check_member_button
 
 
 def IsTiftUser(tg_id):
@@ -23,10 +23,12 @@ def IsTiftUser(tg_id):
     return False
 
 
-@dp.message_handler(CommandStart())
-async def bot_start(message: types.Message):
+@dp.message_handler(CommandStart(), state="*")
+async def bot_start(message: types.Message, state=FSMContext):
     user_id = message.from_user.id    
     await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
+    await state.finish()
+    
     # all = db.select_user_all_data(telegram_id=message.from_user.id)
     # await message.answer(all)
 
@@ -133,7 +135,7 @@ async def login_user_func(message: types.Message, state: FSMContext):
 async def logout_user(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     user = db.select_tift_user(user_id=user_id)
-    if user[8] == "disable" or not user[8]:
+    if not user or user[8] == "disable" or not user[8]:
         await message.answer("Siz tizimga ulanmagansiz.")
     else:
         db.logout_token(token=None, user_id=user_id)

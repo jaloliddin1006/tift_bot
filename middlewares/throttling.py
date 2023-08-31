@@ -42,7 +42,7 @@ class ThrottlingMiddleware(BaseMiddleware):
                 # token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDUxNjA4LCJpYXQiOjE2OTIzNjUyMDgsImp0aSI6IjY3ZjE1NmI1NzA3ZTRmMDZiNjg5NmY0YjdhMWE0ZjhkIiwidXNlcl9pZCI6NH0.WZwuayZdLJ1Au2c-XBoF_e-2sgSJHIouO9uisaw8T6g"
                 if token:
                     if token == "disable":
-                        print("bildirishnoma o'chirilgan", token)
+                        # print("bildirishnoma o'chirilgan", token)
                         pass
                     else:
                         get_user = check_user(token)

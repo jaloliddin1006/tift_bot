@@ -2,13 +2,14 @@ import asyncio
 from aiogram.dispatcher.filters.builtin import CommandStart
 from keyboards.default.defoult_btn import login_menu, back_btn, admin_menu
 
-from aiogram import types
+from aiogram import types, utils
 
 from data.config import ADMINS
 from loader import dp, db, bot
 import pandas as pd
 from datetime import datetime
 import os
+from aiogram.dispatcher import FSMContext
 
 
 @dp.message_handler(CommandStart(), user_id=ADMINS)
@@ -65,6 +66,151 @@ async def get_all_users(message: types.Message):
 
 
 
+@dp.message_handler(text="⚜️ All Channels (Groups)", user_id=ADMINS)
+async def send_ad_to_all(message: types.Message):
+    await message.answer("Majburiy a'zolik kanallari")
+    channels = db.select_all_channels()
+    text = "<b>📣 Homiylar  ro'yxati:</b>\n\n"
+    tr = 1
+    for chanel in channels:
+        text += f"<b>📣 {tr} - {chanel[1]}</b>\n"
+        text += f"<b>ID:</b> {chanel[0]}\n"
+        text += f"<b>Username:</b> {chanel[2]}\n"
+        text += f"<b>Link:</b> {chanel[3]}\n\n"
+        tr += 1
+    await message.answer(text)
+        
+    
+    
+
+@dp.message_handler(text="➕ Add Channels (Groups)", user_id=ADMINS)
+async def get_all_users(message: types.Message, state=FSMContext):
+    await message.answer("Birinchi navbatda botni kanalga qo'shing.")
+    await message.answer("Kanaldan biror postni forward qiling, \nyoki kanal id sini yuboring (-100....) \nyoki username sini yuboring ( misol uchun:  @mychannel )", reply_markup=types.ReplyKeyboardMarkup())
+    await state.set_state("add_channel")
+    
+  
+@dp.message_handler(state="add_channel", user_id=ADMINS, content_types=types.ContentTypes.ANY)
+async def send_ad_to_all(message: types.Message, state = FSMContext):
+    print(message)
+    try:
+        if message.text and message.entities and message.entities[0].type == "mention":
+            channel_username = message.text
+            channel = await bot.get_chat(channel_username)
+            channel_id = channel['id']
+            channel_name = channel['title']
+            channel_link = await channel.export_invite_link()
+            
+            text = f"<b>ID:</b> {channel_id}\n"
+            text += f"<b>Name:</b> {channel_name}\n"
+            text += f"<b>Username:</b> {channel_username}\n"
+            text += f"<b>Link:</b> {channel_link}\n"
+            text += f"\n<code>Homiylar ro'yxatiga qo'shildi</code> ✅\n"
+            db.add_channel(channel_id=channel_id, username=channel_username, channel_name=channel_name, channel_link=channel_link)
+            await message.answer(text, reply_markup=admin_menu)
+            
+        elif message.text and message.text.startswith("-100") and message.text[1:].isdigit():
+            channel = await bot.get_chat(message.text)
+            channel_id = channel['id']
+            channel_name = channel['title']
+            channel_username = channel['username'] if channel['username'] else channel_id
+            channel_link = channel['invite_link']
+            
+            text = f"<b>ID:</b> {channel_id}\n"
+            text += f"<b>Name:</b> {channel_name}\n"
+            text += f"<b>Username:</b> @{channel_username}\n"
+            text += f"<b>Link:</b> {channel_link}\n"
+            text += f"\n<code>Homiylar ro'yxatiga qo'shildi</code> ✅\n"
+            db.add_channel(channel_id=channel_id, username=channel_username, channel_name=channel_name, channel_link=channel_link)
+            await message.answer(text, reply_markup=admin_menu)
+
+        elif message.forward_from_chat:
+            channel_id = message.forward_from_chat.id
+            channel_name = message.forward_from_chat.title
+            channel_username = message.forward_from_chat.username if message.forward_from_chat.username else channel_id
+            channel = await bot.get_chat(channel_id)
+            channel_link = channel['invite_link']
+            
+            text = f"<b>ID:</b> {channel_id}\n"
+            text += f"<b>Name:</b> {channel_name}\n"
+            text += f"<b>Username:</b> @{channel_username}\n"
+            text += f"<b>Link:</b> {channel_link}\n"
+            text += f"\n<code>Homiylar ro'yxatiga qo'shildi</code> ✅\n"
+            db.add_channel(channel_id=channel_id, username=channel_username, channel_name=channel_name, channel_link=channel_link)
+            await message.answer(text, reply_markup=admin_menu)
+            
+        else:
+            await message.answer("Nimadir xato ketti")
+    except utils.exceptions.Unauthorized:
+        await message.answer("Botni Kanal yoki guruhga qo'shilganligiga va admin ekanligiga ishonch hosil qiling", reply_markup= admin_menu)
+    except Exception as err:
+        await message.answer(f"Nomalum xatolik: {err}", reply_markup= admin_menu)
+    
+    await state.finish()
+        
+        
+
+   
+# @dp.message_handler(text="➖ Kanal o'chirish", user_id=ADMINS)
+# async def send_ad_to_all(message: types.Message, state = FSMContext):
+#     try:
+#         await message.answer("Majburiy a'zolik kanallari", reply_markup=ReplyKeyboardRemove())
+#         channels = db.select_all_channels()
+#         text = "Qaysi kanallarni majburiy a'zolikdan olib tashlamoqchisiz:\n\n"
+#         text += "📣 Kanallar ro'yxati:\n\n"
+#         tr = 1
+#         # print(channels)
+#         for chanel in channels:
+#             text += f"📣 {tr} - {chanel[1]}\n📣 Link: {chanel[2]}\n\n"
+#             tr += 1
+#         await message.answer(text, reply_markup=inline_channel_btn(channels))
+            
+        
+    
+#         await state.set_state("delete_channels")
+#     except:
+#         await message.answer("Majburiy a'zolik kanallari xatolik sodir boldi", reply_markup=admin_main_2)
+        
+    
+
+
+# @dp.callback_query_handler(text="back_wars",state="delete_channels")
+# async def change_(call: CallbackQuery, state=FSMContext):
+#     await call.message.delete()
+#     await state.finish()
+#     await call.message.answer("Bosh menu 2", reply_markup=admin_main_2)
+        
+     
+# @dp.callback_query_handler(state="delete_channels")
+# async def golibni_aniqlash_war(call: CallbackQuery, state=FSMContext):
+#     await call.message.delete()
+#     try:
+        
+            
+#         chanel = await bot.get_chat(call.data)
+#         # print(chanel)
+#         id = chanel.id
+#         db.delete_channel(id)
+#         invite_link = await chanel.export_invite_link()
+#         name = chanel.full_name
+        
+
+#         text = f"Name: {name}\n"
+#         text += f"Link: {invite_link}\n"
+#         text += f"\nO'chirildi ✅ \n"
+        
+#         await call.message.answer(text)   
+        
+#     except Exception as err:
+#         await call.message.answer(f"Nimadur xato ketti : {err}")  
+         
+#     await state.finish()
+#     await call.message.answer("Bosh menu 2", reply_markup=admin_main_2)
+#         ##################
+
+
+
+
 @dp.message_handler(text="/reklama", user_id=ADMINS)
 async def send_ad_to_all(message: types.Message):
     users = db.select_all_users()
@@ -73,7 +219,7 @@ async def send_ad_to_all(message: types.Message):
         await bot.send_message(chat_id=user_id, text="@SariqDev kanaliga obuna bo'ling!")
         await asyncio.sleep(0.05)   
 
-@dp.message_handler(text="/cleandb", user_id=ADMINS)
-async def get_all_users(message: types.Message):
-    db.delete_users()
-    await message.answer("Baza tozalandi!")
+# @dp.message_handler(text="/cleandb", user_id=ADMINS)
+# async def get_all_users(message: types.Message):
+#     db.delete_users()
+#     await message.answer("Baza tozalandi!")
