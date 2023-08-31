@@ -1,12 +1,18 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from handlers.users.help import IsTiftUser
 
-
-def login_menu(user=False):
+def login_menu(user=False, tg_id=None):
     loginusermenu = []
     if user == "admin":
-        loginusermenu =   [
-                KeyboardButton(text="👤 Admin menu"), 
-            ]
+        if IsTiftUser(tg_id) and IsTiftUser(tg_id) != "disable":
+            loginusermenu =   [
+                    KeyboardButton(text="👤 Admin menu"), 
+                    KeyboardButton(text="👤 User menu"), 
+                ]
+        else:
+            loginusermenu =   [
+                    KeyboardButton(text="👤 Admin menu"), 
+                ]
     elif user: 
         loginusermenu =   [
                 KeyboardButton(text="👤 User menu"), 
@@ -152,7 +158,7 @@ admin_menu = ReplyKeyboardMarkup(
                     ],
             ],
             resize_keyboard=True,
-            input_field_placeholder="O'qituvchi Menusi"
+            input_field_placeholder="Admin Menusi"
 
         )
 message_phone = ReplyKeyboardMarkup(

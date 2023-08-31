@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command
 from data.config import GroupID
-from handlers.users.start import IsTiftUser
+from handlers.users.help import IsTiftUser
 from keyboards.default.defoult_btn import message_phone, login_menu, back_btn
 from loader import dp, db, bot
 

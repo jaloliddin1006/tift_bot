@@ -1,7 +1,7 @@
 import asyncio
 from aiogram.dispatcher.filters.builtin import CommandStart
 from keyboards.default.defoult_btn import login_menu, back_btn, admin_menu
-
+from keyboards.inline.inline_btn import homiylar_btn, homiy_data, delete_homiylar
 from aiogram import types, utils
 
 from data.config import ADMINS
@@ -15,9 +15,14 @@ from aiogram.dispatcher import FSMContext
 @dp.message_handler(CommandStart(), user_id=ADMINS)
 async def bot_start(message: types.Message):
     user_id = message.from_user.id    
-    await message.answer("Xush kelibsiz Admin!", reply_markup=login_menu(user='admin'))
+    await message.answer("Xush kelibsiz Admin!", reply_markup=login_menu(user='admin',tg_id=user_id))
 
-
+@dp.message_handler(state="*",text ="🔙 Ortga", user_id=ADMINS)
+async def input_password(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id   
+    await state.finish()
+    await message.answer(f"Asosiy sahifa",reply_markup=login_menu(user="admin",tg_id=user_id))
+    
 
 @dp.message_handler(text="👤 Admin menu", user_id=ADMINS)
 async def get_all_users(message: types.Message):
@@ -67,26 +72,68 @@ async def get_all_users(message: types.Message):
 
 
 @dp.message_handler(text="⚜️ All Channels (Groups)", user_id=ADMINS)
-async def send_ad_to_all(message: types.Message):
-    await message.answer("Majburiy a'zolik kanallari")
+async def bot_homiylari_func(message: types.Message):
+    await message.answer("Majburiy a'zolik kanallari", reply_markup=types.ReplyKeyboardRemove())
     channels = db.select_all_channels()
-    text = "<b>📣 Homiylar  ro'yxati:</b>\n\n"
-    tr = 1
-    for chanel in channels:
-        text += f"<b>📣 {tr} - {chanel[1]}</b>\n"
-        text += f"<b>ID:</b> {chanel[0]}\n"
-        text += f"<b>Username:</b> {chanel[2]}\n"
-        text += f"<b>Link:</b> {chanel[3]}\n\n"
-        tr += 1
-    await message.answer(text)
+    if channels:
+            
+        text = "<b>📣 Homiylar  ro'yxati:</b>\n\n"
+        tr = 1
+        for chanel in channels:
+            text += f"<b>📣 {tr} - {chanel[1]}</b>\n"
+            text += f"<b>ID:</b> {chanel[0]}\n"
+            text += f"<b>Username:</b> {chanel[2]}\n"
+            text += f"<b>Link:</b> {chanel[3]}\n\n"
+            text += f"<b>Join users:</b> {chanel[4]}\n\n"
+            tr += 1
+        await message.answer(text, reply_markup=homiylar_btn)
+    else:
+        await message.answer("Homiy kanallar mavjud emas", reply_markup=admin_menu)
         
+@dp.callback_query_handler(text="main_menu", user_id=ADMINS)
+async def change_lang_(query: types.CallbackQuery):     
+    await query.message.delete()
+    await query.message.answer("Admin Panel", reply_markup=admin_menu)
+     
+        
+@dp.callback_query_handler(text="minus_list", user_id=ADMINS)
+async def delete_homiylar_list(query: types.CallbackQuery):
+    await query.message.delete()
+    channels = db.select_all_channels()
+    if channels:
+        text = "<b>📣 Homiylar  ro'yxati:</b>\n\n"
+        tr = 1
+        for chanel in channels:
+            text += f"{tr}. {chanel[1]}\n"
+            tr += 1
+        text += "\nO'chirmoqchi bo'lgan homiylarni tanlang."
+        await query.message.answer(text=text, reply_markup=delete_homiylar(channels))
+    else:
+        await query.message.answer("Homiy kanallar mavjud emas", reply_markup=admin_menu)
+        
+        
+  
+@dp.callback_query_handler(text="back_btn", user_id=ADMINS)
+async def change_lang_(query: types.CallbackQuery):     
+    await query.message.delete()
+    await bot_homiylari_func(query.message)
+
+@dp.callback_query_handler(homiy_data.filter(action='delete'), user_id=ADMINS)
+async def change_lang_(query: types.CallbackQuery, callback_data: dict):
+    del_id = callback_data['id']
     
+    db.delete_channel(channel_id=del_id)
+    await query.answer("Homiylar ro'yxatidan o'chirildi ")
+    
+    await query.message.answer("Homiylar ro'yxatidan o'chirildi ✅", reply_markup=admin_menu)
+    await delete_homiylar_list(query)
+
     
 
 @dp.message_handler(text="➕ Add Channels (Groups)", user_id=ADMINS)
 async def get_all_users(message: types.Message, state=FSMContext):
     await message.answer("Birinchi navbatda botni kanalga qo'shing.")
-    await message.answer("Kanaldan biror postni forward qiling, \nyoki kanal id sini yuboring (-100....) \nyoki username sini yuboring ( misol uchun:  @mychannel )", reply_markup=types.ReplyKeyboardMarkup())
+    await message.answer("Kanaldan biror postni forward qiling, \nyoki kanal id sini yuboring (-100....) \nyoki username sini yuboring ( misol uchun:  @mychannel )", reply_markup=types.ReplyKeyboardRemove())
     await state.set_state("add_channel")
     
   

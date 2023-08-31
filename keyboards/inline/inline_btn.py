@@ -35,3 +35,28 @@ def check_member_button(channels):
     return channels_check
 
 
+homiylar_btn = InlineKeyboardMarkup(
+	inline_keyboard=[
+	[
+		InlineKeyboardButton(text="⚙️ Homiylarni kamaytirish", callback_data="minus_list"),
+		
+	],
+ 	[
+		InlineKeyboardButton(text="🔼 Bosh menu", callback_data="main_menu"),
+		
+	],
+])
+
+
+homiy_data = CallbackData('vote', 'action', 'id')  # post:<action>:<language>
+
+def delete_homiylar(channels):
+    
+    channels_check = InlineKeyboardMarkup(row_width=1)
+    tr = 1
+    for channel in channels:
+        channels_check.insert(InlineKeyboardButton(text=f"{tr}. {channel[1]}", callback_data=homiy_data.new(action='delete', id=f'{channel[0]}')))
+        tr += 1
+    channels_check.add(InlineKeyboardButton(text=f"🔙 Ortga", callback_data=f"back_btn"))
+        
+    return channels_check

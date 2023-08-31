@@ -17,7 +17,7 @@ async def on_startup(dispatcher):
         # db.create_table_tiftusers()
         # db.drop_message()
         # db.create_table_messages()
-        db.drop_channels()
+        # db.drop_channels()
         db.create_table_channels()
     except Exception as err:
         print(err)

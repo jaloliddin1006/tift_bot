@@ -1,7 +1,16 @@
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandHelp
 
-from loader import dp
+from loader import dp, db
+
+def IsTiftUser(tg_id):
+    user = db.select_tift_user(user_id=tg_id)  
+    if user:
+        if user[-1]:
+            if user[-1] == "disable":
+                return False
+            return user[5]  
+    return False
 
 
 @dp.message_handler(CommandHelp())

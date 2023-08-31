@@ -11,16 +11,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command
 from keyboards.default.defoult_btn import login_menu, back_btn  
 from keyboards.inline.inline_btn import language_btn, lang_code, check_member_button
+from handlers.users.help import IsTiftUser
 
-
-def IsTiftUser(tg_id):
-    user = db.select_tift_user(user_id=tg_id)  
-    if user:
-        if user[-1]:
-            if user[-1] == "disable":
-                return False
-            return user[5]  
-    return False
 
 
 @dp.message_handler(CommandStart(), state="*")

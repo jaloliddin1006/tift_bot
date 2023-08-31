@@ -195,12 +195,12 @@ class Database:
         """
         return self.execute(sql, parameters=(adding_member, channel_id), commit=True)
 
-    def delete_channel(self,  **kwargs):
+    def delete_channel(self,  channel_id):
         sql = f"""
-        DELETE Channels where 
+        DELETE FROM Channels where channel_id=?
         """
-        sql, parameters = self.format_args(sql, kwargs)
-        return self.execute(sql, parameters=parameters, commit=True)
+        
+        return self.execute(sql, parameters=(channel_id,), commit=True)
     
     def drop_channels(self):
         self.execute("DROP TABLE Channels", commit=True)

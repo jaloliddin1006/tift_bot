@@ -5,8 +5,8 @@ from aiogram import types
 from data.api import get_notifications, get_student_schedule, get_student_sciences, get_teacher_groups, get_teacher_schedule, login_user, get_student, get_rating_notebook
 
 from data.config import ADMINS
-from handlers.users.start import IsTiftUser
 from loader import dp, db, bot
+from handlers.users.help import IsTiftUser
 
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command

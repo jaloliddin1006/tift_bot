@@ -5,7 +5,8 @@ from aiogram.dispatcher.filters.builtin import CommandStart
 from data.api import login_user
 
 from data.config import ADMINS
-from handlers.users.start import IsTiftUser
+from handlers.users.help import IsTiftUser
+
 from loader import dp, db, bot
 
 from aiogram.dispatcher import FSMContext
