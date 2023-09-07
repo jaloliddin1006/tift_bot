@@ -67,7 +67,8 @@ async def get_all_users(message: types.Message):
     # # # Faylni o'chirish
     # # os.remove(excel_filename)
     # # os.remove(excel_filename2)
-    await message.answer("Bot foydalanuvchilari ma'lumotlari")
+    users = db.select_all_users()
+    await message.answer(f"Bot foydalanuvchilari ma'lumotlari: {len(users)}")
 
 
 
