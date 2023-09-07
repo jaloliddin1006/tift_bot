@@ -6,13 +6,15 @@ import json
 # BASE_URL = "http://oqdevpy.jprq.live/api/v1"
 # BASE_URL = "http://127.0.0.1:8000/api/v1"
 BASE_URL = "https://api.lms-edu.uz/api/v1"
+BASE_URL = "https://api.tift.uz/api/v1"
+
 
 def login_user(username, password):
     url = f"{BASE_URL}/login/"
     data = {
                 "username": username,
                 "password": password,
-                # "is_bot": True,
+                "is_bot": True,
             }
     response = requests.post(url=url, data=data)
     if response.status_code == 200:
@@ -161,9 +163,28 @@ def get_teacher_schedule(token):
     get_data = json.loads(get_me.text)
     return get_data
 
+def get_video_source(token):
+    # url = f"{BASE_URL}/teacher/schedule/" ## last semester
+    # get_me_header = {
+    #         'Authorization': f"Bearer {token}",
+    #     }
+    # get_me = requests.get(url, headers=get_me_header)
+    # get_data = json.loads(get_me.text)
+    video = "https://www.youtube.com/watch?v=-penHWNfvVI"
+    return video
 
 
 
+
+
+def get_contract(passport):
+    url = f"{BASE_URL}/studentcontract/?contract_id={passport}"
+    get_me = requests.get(url)
+   
+    if get_me.status_code == 200:
+        get_data = json.loads(get_me.text)
+        return {'data':get_data, "url":BASE_URL}
+    return []
 
 
 

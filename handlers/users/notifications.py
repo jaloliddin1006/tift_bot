@@ -34,7 +34,7 @@ async def send_notifications(token ):
 
 async def get_and_send_notifications():
     users = db.select_all_users("TiftUsers")
-    
+    msg = ''
     for user in users:
         token = user[8]
         user_id = user[2]
@@ -46,7 +46,7 @@ async def get_and_send_notifications():
                 get_user = check_user(token)
                 if get_user != 200:
                     db.logout_token(user_id=user_id, token=None)
-                    await bot.send_message(chat_id=user_id,text = "LMS bilan aloqa uzuldi, endi siz bildirishnomalarni boshqa ololmaysiz. \nIltimos qaytadan tizimga kiring. 👉 /login", reply_markup=login_menu(user=False))
+                    msg = await bot.send_message(chat_id=user_id,text = "LMS bilan aloqa uzuldi, endi siz bildirishnomalarni boshqa ololmaysiz. \nIltimos qaytadan tizimga kiring. 👉 /login", reply_markup=login_menu(user=False))
                 else:
                     send_data = await send_notifications(token)
                     if send_data:
@@ -57,7 +57,9 @@ async def get_and_send_notifications():
                         # print("data bo'sh")
                         pass
         else:
-            await bot.send_message(chat_id=user_id,text = "LMS bilan aloqa uzuldi, endi siz bildirishnomalarni boshqa ololmaysiz. \nIltimos qaytadan tizimga kiring. 👉 /login", reply_markup=login_menu(user=False))
+            msg = await bot.send_message(chat_id=user_id,text = "LMS bilan aloqa uzuldi, endi siz bildirishnomalarni boshqa ololmaysiz. \nIltimos qaytadan tizimga kiring. 👉 /login", reply_markup=login_menu(user=False))
+        if msg:
+            await bot.pin_chat_message(chat_id=msg.chat.id, message_id=msg.message_id, disable_notification=False)
         
 
 

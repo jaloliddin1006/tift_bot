@@ -2,7 +2,7 @@ import datetime
 import sqlite3
 
 from aiogram import types
-from data.api import get_notifications, get_student_schedule, get_student_sciences, get_teacher_groups, get_teacher_schedule, login_user, get_student, get_rating_notebook
+from data.api import get_notifications, get_student_schedule, get_student_sciences, get_teacher_groups, get_teacher_schedule, login_user, get_student, get_rating_notebook, get_video_source
 
 from data.config import ADMINS
 from loader import dp, db, bot
@@ -26,7 +26,17 @@ async def bot_start(message: types.Message):
     user = db.select_tift_user(user_id=message.from_user.id)  
     await message.answer("Kerakli bo'limni tanlang", reply_markup=user_menu_func(user=user[5]))
     
-
+@dp.message_handler(text = "🎞 Video Qo'llanma")
+async def bot_start(message: types.Message):
+    user = db.select_tift_user(user_id=message.from_user.id)
+    await message.answer(f"<b>{user[5]}</b> roliga tegishli video qo'llanma.")    
+    if user:
+        video = get_video_source(user[8])
+        # 
+        
+        await message.answer(video)
+    
+    
 @dp.message_handler(text = "📚 Meni Fanlarim")
 async def bot_start(message: types.Message):
     user = db.select_tift_user(user_id=message.from_user.id)  

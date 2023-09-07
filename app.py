@@ -9,7 +9,7 @@ from utils.set_bot_commands import set_default_commands
 async def on_startup(dispatcher):
     # Birlamchi komandalar (/star va /help)
     await set_default_commands(dispatcher)
-    scheduler.start()
+    # scheduler.start()
 
     # Ma'lumotlar bazasini yaratamiz:
     try:
@@ -18,7 +18,8 @@ async def on_startup(dispatcher):
         # db.drop_message()
         # db.create_table_messages()
         # db.drop_channels()
-        db.create_table_channels()
+        # db.create_table_channels()
+        pass
     except Exception as err:
         print(err)
         # pass

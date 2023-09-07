@@ -1,7 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandHelp
-
-from loader import dp, db
+from loader import dp, db, bot
 
 def IsTiftUser(tg_id):
     user = db.select_tift_user(user_id=tg_id)  

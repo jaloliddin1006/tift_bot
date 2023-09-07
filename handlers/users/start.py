@@ -131,7 +131,8 @@ async def logout_user(message: types.Message, state: FSMContext):
         await message.answer("Siz tizimga ulanmagansiz.")
     else:
         db.logout_token(token=None, user_id=user_id)
-        await message.answer(f"{user[3]} -  tizimdan muvaffaqiyatli chiqdingiz",reply_markup=login_menu(user=False))
+        msg = await message.answer(f"{user[3]} -  tizimdan muvaffaqiyatli chiqdingiz",reply_markup=login_menu(user=False))
+        await bot.pin_chat_message(chat_id=msg.chat.id, message_id=msg.message_id, disable_notification=False)
     
     
     

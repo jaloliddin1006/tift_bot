@@ -7,7 +7,7 @@ from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.utils.exceptions import Throttled
 from data.api import check_user
 from keyboards.default.defoult_btn import login_menu
-from loader import db
+from loader import db, bot
 import sqlite3
 
 class ThrottlingMiddleware(BaseMiddleware):
@@ -48,7 +48,8 @@ class ThrottlingMiddleware(BaseMiddleware):
                         get_user = check_user(token)
                         if get_user != 200:
                             db.logout_token(user_id=message.from_user.id, token=None)
-                            await message.answer("LMS bilan aloqa uzuldi, qaytadan login qiling. 👉 /login", reply_markup=login_menu(user=False))
+                            msg = await message.answer("LMS bilan aloqa uzuldi, qaytadan login qiling. 👉 /login", reply_markup=login_menu(user=False))
+                            await bot.pin_chat_message(chat_id=msg.chat.id, message_id=msg.message_id, disable_notification=False)
             
             
 

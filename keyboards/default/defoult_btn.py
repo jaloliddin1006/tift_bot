@@ -22,14 +22,18 @@ def login_menu(user=False, tg_id=None):
         keyboard=[
             [
                 KeyboardButton(text="ℹ️ Ma'lumot olish"), 
-                KeyboardButton(text="🌐 Tilni o'zgartirish"),           
+                KeyboardButton(text="🎓 Talabalar bo'limi"),           
             ],
             [
                 KeyboardButton(text="📨 Xabar yozish"), 
             ],
             loginusermenu,
             [
-                KeyboardButton(text="👨🏻‍💻️ Muallif"), 
+                # KeyboardButton(text="🌐 Tilni o'zgartirish"),           
+                
+            ],
+            [
+                # KeyboardButton(text="👨🏻‍💻️ Muallif"), 
             ],
         ],
         resize_keyboard=True,
@@ -79,6 +83,7 @@ def user_menu_func(user):
                     ],
                  [
                     KeyboardButton(text="ℹ️ Ma'lumotlarim"), 
+                    KeyboardButton(text="🎞 Video Qo'llanma"), 
                     ],
                 
                 [
@@ -94,9 +99,10 @@ def user_menu_func(user):
             keyboard=[
                 
                 [
-                    KeyboardButton(text="👥 Meni Guruhlarim"),              
+                    KeyboardButton(text="🎞 Video Qo'llanma"), 
                     ],
                 [
+                    KeyboardButton(text="👥 Meni Guruhlarim"),              
                     KeyboardButton(text="📅 Dars jadvalim"), 
                     ],
                 [
@@ -185,6 +191,29 @@ back_btn = ReplyKeyboardMarkup(
         input_field_placeholder="Your full name ..."
 
     )
+# https://t.me/eduuz/10199
+student_part_btn = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="📃 Shartnomani yuklab olish"), 
+        ],
+        [
+            KeyboardButton(text="💳 Ta'lim kreditlari"), 
+        ],
+        
+        [
+            KeyboardButton(text="ℹ️ Ichki tartib qoidalar"),           
+            KeyboardButton(text="👨🏻‍🎓 Iqtidorli talabalar bo'limi"),           
+            
+        ],
+         [
+                KeyboardButton(text="🔙 Ortga"), 
+                ],
+    ],
+    resize_keyboard=True,
+    input_field_placeholder="Talabalar bo'limi"
+
+)
 
 def eslatmani_yoqish(aa):
     eslatma = ReplyKeyboardMarkup(
