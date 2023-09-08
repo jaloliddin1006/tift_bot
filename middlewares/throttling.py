@@ -6,9 +6,13 @@ from aiogram.dispatcher.handler import CancelHandler, current_handler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.utils.exceptions import Throttled
 from data.api import check_user
+from handlers.users.echo import subscribe_channel_func
 from keyboards.default.defoult_btn import login_menu
+from keyboards.inline.inline_btn import check_member_button
 from loader import db, bot
 import sqlite3
+
+from utils.misc import subscription
 
 class ThrottlingMiddleware(BaseMiddleware):
     """
@@ -21,7 +25,6 @@ class ThrottlingMiddleware(BaseMiddleware):
         super(ThrottlingMiddleware, self).__init__()
 
     async def on_process_message(self, message: types.Message, data: dict):
-        # print(message.from_user.full_name)
         
         user = message.from_user
         old = db.select_bot_user(telegram_id = user.id)

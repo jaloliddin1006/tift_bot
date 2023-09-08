@@ -1,6 +1,7 @@
 from aiogram import types
 from data.config import ADMINS
 from handlers.users.help import IsTiftUser
+from keyboards.inline.inline_btn import check_member_button
 
 
 from loader import dp, db, bot
@@ -13,8 +14,9 @@ async def bot_echo(message: types.Message):
     user_id = message.from_user.id
     await message.answer(message.text, reply_markup=login_menu(user="admin", tg_id=user_id))
 
-@dp.message_handler(state=None)
-async def bot_echo(message: types.Message):
+async def subscribe_channel_func(message, result, join_channel):
+    await message.answer("Kanallarga to'liq obuna bo'ling", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer(result, disable_web_page_preview=True, reply_markup=check_member_button(join_channel))
     
     # chat = await bot.get_chat('@new_bot_test_group')
     # #    user = await bot.get_chat_member(chat_id="@new_bot_test_group", user_id=message.from_user.id)
@@ -27,7 +29,7 @@ async def bot_echo(message: types.Message):
     # # member_count = await bot.get_chat_member_count(chat_id=chat.id) ## member count
     
     
-    await message.answer(message.text)
+    # await message.answer(message.text)
     # if status['status'] == 'left':
     #     channel_info = [invite_link, chat.title, 0]
     # else:

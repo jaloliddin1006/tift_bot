@@ -1,4 +1,5 @@
 import sqlite3
+import time
 
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
@@ -73,7 +74,7 @@ async def input_password(message: types.Message, state: FSMContext):
     if user:
         # student = db.select_tift_user(user_id=user_id)
         # shartnoma = get_student_contract(student[-1])   #api chiqarilganda hujjatlarni api orqali olib keladi
-        await message.answer("talaba shartnomasi yuboriladi, api chiqarilgandan so'ng...")
+        await message.answer("talaba shartnomasi yuboriladi...")
     else:
         # await message.answer(f"⚠️ Siz faqat TIFT talabasi bo'lgan taqdirda shartnomani yuklab olishingiz mumkin. Agar talaba bo'lsangiz tizim bilan bog'lanishingiz kerak: /login",reply_markup=student_part_btn)
         await message.answer("Shartnomani yuklab olish uchun Pasport seria va raqamingizni yuboring.", reply_markup=types.ReplyKeyboardRemove())
@@ -85,20 +86,34 @@ async def input_password(message: types.Message, state: FSMContext):
 async def input_password(message: types.Message, state: FSMContext):
     user_id = message.from_user.id   
     contracts = get_contract(message.text)
-    if contracts:
-        base_url = contracts["url"]
-        await message.answer("Shartnomangizni quidagi link orqali yuklab olishingiz mumkin\n\n")
-      
-        for contract in contracts["data"]:
-
-            doc = f"{base_url[0:-7]}{contract['file']}"
-            if requests.get(doc).status_code == 200:
-                text = f"          [📂 Yuklab olish  -  {contract['type']}]({doc}) \n\n" 
-                await message.answer(text, parse_mode=types.ParseMode.MARKDOWN) 
-            else:
-                await message.answer("Shartnoma hozircha mavjud emas.")
-    else:
-        await message.answer("Passport seria raqami topilmadi. ")
+    time_msg = await message.answer("Biroz kutib turing ...  ⏳ ")
+    for i in range(3):
+        time_msg = await bot.edit_message_text(f"Biroz kutib turing ...  ⌛️ ", chat_id=message.from_user.id, message_id=time_msg.message_id)
+        time.sleep(0.5)
+        time_msg = await bot.edit_message_text(f"Biroz kutib turing ...  ⏳ ", chat_id=message.from_user.id, message_id=time_msg.message_id)
+        time.sleep(0.5)
+    await time_msg.delete()
+        
+    try:
+        if contracts:
+            base_url = contracts["url"]
+            await message.answer("Shartnomangizni quidagi link orqali yuklab olishingiz mumkin\n\n")
+ 
+        
+            for contract in contracts["data"]:
+                print(contract)
+            
+                doc = f"{base_url[0:-7]}{contract['file']}"
+                if requests.get(doc).status_code == 200:
+                    text = f"          [📂 Yuklab olish  -  {contract['type']}]({doc}) \n\n" 
+                    await message.answer(text, parse_mode=types.ParseMode.MARKDOWN) 
+                else:
+                    await message.answer("Shartnoma hozircha mavjud emas.")
+        else:
+            await message.answer("Passport seria raqami topilmadi. ")
+    except:
+        await message.answer("Passport seria raqami topilmadi...")
+        
     await state.finish()
     await message.answer(f"Asosiy sahifa",reply_markup=login_menu(user=IsTiftUser(user_id)))
     
