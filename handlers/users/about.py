@@ -115,7 +115,7 @@ async def input_password(message: types.Message, state: FSMContext):
         await message.answer("Passport seria raqami topilmadi...")
         
     await state.finish()
-    await message.answer(f"Asosiy sahifa",reply_markup=login_menu(user=IsTiftUser(user_id)))
+    await message.answer(f"Talabalar bo'limi. Talabalar tuchun kerakli hujjatlar.",reply_markup=student_part_btn)
     
     
     
