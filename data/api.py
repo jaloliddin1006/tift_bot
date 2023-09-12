@@ -54,31 +54,34 @@ def get_student(token):
     get_me_header = {
             'Authorization': f"Bearer {token}",
         }
-    get_me = requests.get(url, headers=get_me_header)
-    get_data = json.loads(get_me.text)['result']
-    full_name = get_data['full_name']
-    direction = get_data['direction']
-    birthday = get_data['birthday']
-    course_number = get_data['course_number']
-    academic_group = get_data['academic_group']
-    tutor = get_data['tutor']
-    rating_notebook = get_data['rating_notebook']
     try:
-        gpa = get_data['gpa', 0] 
+        get_me = requests.get(url, headers=get_me_header)
+        get_data = json.loads(get_me.text)['result']
+        full_name = get_data['full_name']
+        direction = get_data['direction']
+        birthday = get_data['birthday']
+        course_number = get_data['course_number']
+        academic_group = get_data['academic_group']
+        tutor = get_data['tutor']
+        rating_notebook = get_data['rating_notebook']
+        try:
+            gpa = get_data['gpa', 0] 
+        except:
+            gpa = 0
+            
+        context = {
+            'full_name':full_name,
+            'direction':direction,
+            'birthday':birthday,
+            'course_number':course_number,
+            'academic_group':academic_group,
+            'tutor':tutor,
+            'rating_notebook':rating_notebook,
+            'gpa':gpa,
+        }
+        return context
     except:
-        gpa = 0
-        
-    context = {
-        'full_name':full_name,
-        'direction':direction,
-        'birthday':birthday,
-        'course_number':course_number,
-        'academic_group':academic_group,
-        'tutor':tutor,
-        'rating_notebook':rating_notebook,
-        'gpa':gpa,
-    }
-    return context
+        return None
 
 
 def get_rating_notebook(token):
@@ -180,11 +183,10 @@ def get_video_source(token):
 def get_contract(passport):
     url = f"{BASE_URL}/bot/getstudentcontract/?passport={passport}"
     get_me = requests.get(url)
-    print(get_me)
     if get_me.status_code == 200:
         get_data = json.loads(get_me.text)
         return {'data':get_data, "url":BASE_URL}
-    return []
+    return None
 
 
 

@@ -69,17 +69,22 @@ async def input_password(message: types.Message):
 
 @dp.message_handler(text ="📃 Shartnomani yuklab olish")
 async def input_password(message: types.Message, state: FSMContext):
+    users = [2079362883, 6225306577, 827825058]
     user_id = message.from_user.id
-    user = IsTiftUser(tg_id=user_id)
-    if user:
-        # student = db.select_tift_user(user_id=user_id)
-        # shartnoma = get_student_contract(student[-1])   #api chiqarilganda hujjatlarni api orqali olib keladi
-        await message.answer("talaba shartnomasi yuboriladi...")
-    else:
-        # await message.answer(f"⚠️ Siz faqat TIFT talabasi bo'lgan taqdirda shartnomani yuklab olishingiz mumkin. Agar talaba bo'lsangiz tizim bilan bog'lanishingiz kerak: /login",reply_markup=student_part_btn)
+    if user_id in users:
+        # user = IsTiftUser(tg_id=user_id)
+        # if user:
+        #     # student = db.select_tift_user(user_id=user_id)
+        #     # shartnoma = get_student_contract(student[-1])   #api chiqarilganda hujjatlarni api orqali olib keladi
+        #     await message.answer("talaba shartnomasi yuboriladi...")
+        # else:
+        #     await message.answer(f"⚠️ Siz faqat TIFT talabasi bo'lgan taqdirda shartnomani yuklab olishingiz mumkin. Agar talaba bo'lsangiz tizim bilan bog'lanishingiz kerak: /login",reply_markup=student_part_btn)
         await message.answer("Shartnomani yuklab olish uchun Pasport seria va raqamingizni yuboring.", reply_markup=types.ReplyKeyboardRemove())
         await state.set_state("passport")
-    
+    else:
+        await message.answer("Sizga ruxsat mavjud emas")
+        await state.finish()
+        
     
 
 @dp.message_handler(state="passport")
@@ -87,7 +92,7 @@ async def input_password(message: types.Message, state: FSMContext):
     user_id = message.from_user.id   
     contracts = get_contract(message.text)
     time_msg = await message.answer("Biroz kutib turing ...  ⏳ ")
-    for i in range(3):
+    for i in range(2):
         time_msg = await bot.edit_message_text(f"Biroz kutib turing ...  ⌛️ ", chat_id=message.from_user.id, message_id=time_msg.message_id)
         time.sleep(0.5)
         time_msg = await bot.edit_message_text(f"Biroz kutib turing ...  ⏳ ", chat_id=message.from_user.id, message_id=time_msg.message_id)
@@ -101,7 +106,7 @@ async def input_password(message: types.Message, state: FSMContext):
  
         
             for contract in contracts["data"]:
-                print(contract)
+                # print(contract)
             
                 doc = f"{base_url[0:-7]}{contract['file']}"
                 if requests.get(doc).status_code == 200:

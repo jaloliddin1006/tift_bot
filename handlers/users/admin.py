@@ -1,6 +1,6 @@
 import asyncio
 from aiogram.dispatcher.filters.builtin import CommandStart
-from keyboards.default.defoult_btn import login_menu, back_btn, admin_menu
+from keyboards.default.defoult_btn import login_menu, back_btn, admin_menu, message_type_btn
 from keyboards.inline.inline_btn import homiylar_btn, homiy_data, delete_homiylar
 from aiogram import types, utils
 
@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 import os
 from aiogram.dispatcher import FSMContext
-
+import openpyxl
 
 @dp.message_handler(CommandStart(), user_id=ADMINS)
 async def bot_start(message: types.Message):
@@ -41,8 +41,9 @@ async def get_all_users(message: types.Message):
 
 @dp.message_handler(text="👯‍♂️ All Users", user_id=ADMINS)
 async def get_all_users(message: types.Message):
-    # usersBOT = db.select_all_users("BotUsers")
+    usersBOT = db.select_all_users("BotUsers")
     # usersTIFT = db.select_all_users("TiftUsers")
+    await message.answer(f"Bot foydalanuvchilari ma'lumotlari: {len(usersBOT)}")
     
     # df = pd.DataFrame(usersBOT, columns=['id', 'telegram_id', 'name', 'user_name', 'language', 'join_date'])
     # excel_filename = f"Bot_Users.xlsx"
@@ -67,8 +68,6 @@ async def get_all_users(message: types.Message):
     # # # Faylni o'chirish
     # # os.remove(excel_filename)
     # # os.remove(excel_filename2)
-    users = db.select_all_users("BotUsers")
-    await message.answer(f"Bot foydalanuvchilari ma'lumotlari: {len(users)}")
 
 
 
@@ -140,7 +139,6 @@ async def get_all_users(message: types.Message, state=FSMContext):
   
 @dp.message_handler(state="add_channel", user_id=ADMINS, content_types=types.ContentTypes.ANY)
 async def send_ad_to_all(message: types.Message, state = FSMContext):
-    print(message)
     try:
         if message.text and message.entities and message.entities[0].type == "mention":
             channel_username = message.text
@@ -198,76 +196,188 @@ async def send_ad_to_all(message: types.Message, state = FSMContext):
         
         
 
-   
-# @dp.message_handler(text="➖ Kanal o'chirish", user_id=ADMINS)
-# async def send_ad_to_all(message: types.Message, state = FSMContext):
-#     try:
-#         await message.answer("Majburiy a'zolik kanallari", reply_markup=ReplyKeyboardRemove())
-#         channels = db.select_all_channels()
-#         text = "Qaysi kanallarni majburiy a'zolikdan olib tashlamoqchisiz:\n\n"
-#         text += "📣 Kanallar ro'yxati:\n\n"
-#         tr = 1
-#         # print(channels)
-#         for chanel in channels:
-#             text += f"📣 {tr} - {chanel[1]}\n📣 Link: {chanel[2]}\n\n"
-#             tr += 1
-#         await message.answer(text, reply_markup=inline_channel_btn(channels))
-            
-        
-    
-#         await state.set_state("delete_channels")
-#     except:
-#         await message.answer("Majburiy a'zolik kanallari xatolik sodir boldi", reply_markup=admin_main_2)
-        
-    
 
 
-# @dp.callback_query_handler(text="back_wars",state="delete_channels")
-# async def change_(call: CallbackQuery, state=FSMContext):
-#     await call.message.delete()
-#     await state.finish()
-#     await call.message.answer("Bosh menu 2", reply_markup=admin_main_2)
-        
-     
-# @dp.callback_query_handler(state="delete_channels")
-# async def golibni_aniqlash_war(call: CallbackQuery, state=FSMContext):
-#     await call.message.delete()
-#     try:
-        
-            
-#         chanel = await bot.get_chat(call.data)
-#         # print(chanel)
-#         id = chanel.id
-#         db.delete_channel(id)
-#         invite_link = await chanel.export_invite_link()
-#         name = chanel.full_name
-        
-
-#         text = f"Name: {name}\n"
-#         text += f"Link: {invite_link}\n"
-#         text += f"\nO'chirildi ✅ \n"
-        
-#         await call.message.answer(text)   
-        
-#     except Exception as err:
-#         await call.message.answer(f"Nimadur xato ketti : {err}")  
-         
-#     await state.finish()
-#     await call.message.answer("Bosh menu 2", reply_markup=admin_main_2)
-#         ##################
-
-
-
-
-@dp.message_handler(text="/reklama", user_id=ADMINS)
+@dp.message_handler(text="✍🏻 Xabar yozish", user_id=ADMINS)
 async def send_ad_to_all(message: types.Message):
-    users = db.select_all_users()
-    for user in users:
-        user_id = user[0]
-        await bot.send_message(chat_id=user_id, text="@SariqDev kanaliga obuna bo'ling!")
-        await asyncio.sleep(0.05)   
+   await message.answer("Kimga xabar yozmoqchisiz?", reply_markup=message_type_btn)
 
-# @dp.message_handler(text="/cleandb", user_id=ADMINS)
-# async def get_all_users(message: types.Message):
-#     db.delete_users()
-#     await message.answer("Baza tozalandi!")
+
+
+
+
+@dp.message_handler(text="👥 To All Users", user_id=ADMINS)
+async def send_ad_to_all(message: types.Message, state: FSMContext):
+   await message.answer("Barcha userlarga yubormoqchi bo'lgan matnli xabaringizni kiriting", reply_markup=back_btn)
+   await state.set_state("text_all_message")
+
+
+@dp.message_handler(state="text_all_message")
+async def send_message(message: types.Message, state: FSMContext):
+    all_users = db.select_all_users("BotUsers")
+    failed_users = 0
+    try:
+        for user in all_users:
+            try:
+                await bot.send_message(chat_id=user[1], text=message.text)
+                await asyncio.sleep(0.05)
+            except:
+                failed_users += 1
+                continue
+        await message.answer(f"Barcha userlarga xabar yuborildi\n\nJami userlar: {len(all_users)}\n\nXabar yetib bormadi: {failed_users}", reply_markup=admin_menu)
+    except  Exception as err:
+        await message.answer(f"Xatolik yuz berdi: {err}", reply_markup=admin_menu)
+    await state.finish()
+    
+
+
+@dp.message_handler(text="🏛 To TIFT Users", user_id=ADMINS)
+async def send_ad_to_all(message: types.Message, state: FSMContext):
+   await message.answer("TIFT userlarga yubormoqchi bo'lgan matnli xabaringizni kiriting", reply_markup=back_btn)
+   await state.set_state("text_tift_message")
+
+
+@dp.message_handler(state="text_tift_message")
+async def send_message(message: types.Message, state: FSMContext):
+    all_users = db.select_all_users("TiftUsers")
+    failed_users = {}
+    failed_users["username"] = "full_name"
+    try:
+        for user in all_users:
+            try:
+                await bot.send_message(chat_id=user[2], text=message.text)
+                await asyncio.sleep(0.05)
+            except  Exception as err:
+                failed_users[user[3]] = user[4]
+                continue
+        await message.answer(f"Barcha userlarga xabar yuborildi\n\nJami userlar: {len(all_users)}\n\nXabar yetib bormadi: {len(failed_users)}", reply_markup=admin_menu)
+        try:
+            # write failed users to .txt and send to admin 
+            with open("failed_users.txt", "w") as file:
+                for user in failed_users:
+                    file.write(f"{user} - {failed_users[user]}\n")
+            with open("failed_users.txt", "rb") as file:
+                await message.answer(f"Yuborilmagan userlar ro'yxatini")
+                await bot.send_document(chat_id=message.from_user.id, document=file)
+            os.remove("failed_users.txt")
+            
+       
+        except Exception as err:
+            await message.answer(f"Yuborilmagan userlar ro'yxatini chiqarishda xatolik: {err}", reply_markup=admin_menu)
+    except  Exception as err:
+        await message.answer(f"Xatolik yuz berdi: {err}", reply_markup=admin_menu)
+    await state.finish()
+    
+
+
+
+@dp.message_handler(text="📁 Userlarni Exceldan yuklash", user_id=ADMINS)
+async def send_ad_to_all(message: types.Message, state: FSMContext):
+    await message.answer("TIFT userlari passport yozilgan excel yuboring... \n\nexceldagi ustun nomlari quidagicha bo'lishi kerak: <code>ID</code> | <code>FISH</code> ", reply_markup=back_btn)
+    with open("BotExcelShablon.xlsx", "rb") as file:
+        await bot.send_document(chat_id=message.from_user.id, document=file)
+    await state.set_state("text_excel_message")
+
+@dp.message_handler(state="text_excel_message", content_types=types.ContentTypes.DOCUMENT)
+async def send_message(message: types.Message, state: FSMContext):
+    try:
+        
+        
+        file_id = message.document.file_id
+        file_name = "students.xlsx"
+        file = await bot.get_file(file_id=file_id)
+        file_path = file.file_path
+        await bot.download_file(file_path=file_path, destination=f"excel/{file_name}")
+        await message.answer(f"Excel fayl yuklandi ✅")
+        await message.answer("exceldan o'qilgan userlarga yubormoqchi bo'lgan matnli xabaringizni kiriting", reply_markup=back_btn)
+        await state.set_state("send_text_excel_message")
+    except Exception as err:
+        await message.answer(f"Excel faylni yuklashda xatolik: {err}")
+        await state.finish()
+        return
+        
+        
+
+@dp.message_handler(state="send_text_excel_message")
+async def send_message(message: types.Message, state: FSMContext):
+    send_msg = message.text
+    try:
+        df = pd.read_excel(f"excel/students.xlsx", engine='openpyxl', header=0)  
+        failed_users = {}
+
+        for i, row in df.iterrows():
+            try:
+                pasport = row['pasport']
+                user_id = db.select_tift_user(username=pasport)
+                if user_id:
+                    await bot.send_message(chat_id=user_id[2], text=send_msg)
+                    await asyncio.sleep(0.01)
+                else:
+                    failed_users[pasport] = row['FISH']
+                    continue
+                                    
+            except  Exception as err:
+                print(err)
+                continue
+        await message.answer(f"Barcha userlarga xabar yuborildi\n\nJami userlar: {df.shape[0]}\n\nXabar yetib bormadi: {len(failed_users)}", reply_markup=admin_menu)
+        try:
+            # write failed users to .txt and send to admin 
+            with open("failed_users_2.txt", "w") as file:
+                for user in failed_users:
+                    file.write(f"{user} - {failed_users[user]}\n")
+            with open("failed_users_2.txt", "rb") as file:
+                await message.answer(f"Yuborilmagan userlar ro'yxatini")
+                await bot.send_document(chat_id=message.from_user.id, document=file)
+            os.remove("failed_users_2.txt")
+            
+       
+        except Exception as err:
+            await message.answer(f"Yuborilmagan userlar ro'yxatini chiqarishda xatolik: {err}", reply_markup=admin_menu)
+    except Exception as err:
+        await message.answer(f"Excel faylni o'qishda xatolik: {err}")
+        os.remove("excel/students.xlsx")
+        return       
+    await state.finish()
+     
+     
+     
+     
+
+
+@dp.message_handler(text="⏩ Reklama (Forward)", user_id=ADMINS)
+async def send_ad_to_all(message: types.Message, state: FSMContext):
+    await message.answer("Foydalanuvchilarga reklamani forward qilish uchun biror kanaldan postni forward qilib yuboring...", reply_markup=back_btn)
+    await state.set_state("forward_message")
+
+
+@dp.message_handler(state="forward_message", content_types=types.ContentTypes.ANY)
+async def forward_post(message: types.Message, state=FSMContext):
+    # post_id = message.forward_from_message_id
+    # channel = message.forward_from_chat.id
+    # # print(message)
+    # print(post_id, channel)
+    
+    # # forward message to users 
+    # all_users = db.select_all_users("BotUsers")
+    # failed_users = 0
+    
+    # for user in all_users:
+    #     try:
+    #         await bot.forward_message(chat_id=user[1], from_chat_id=str(channel), message_id=post_id)
+    #         await bot.forward_message(chat_id=user[1],)
+    #         await asyncio.sleep(0.05)
+    #     except Exception as err:
+    #         print(err)
+    #         failed_users += 1
+    #         continue
+    # await message.answer(f"Barcha userlarga xabar yuborildi\n\nJami userlar: {len(all_users)}\n\nXabar yetib bormadi: {failed_users}", reply_markup=admin_menu)
+    await message.answer("xozir ishlamaydi", reply_markup=admin_menu)
+    await state.finish()
+    
+    
+    
+    # try:
+    #     # Forward qilmoqchi bo'lgan postni forward qilamiz
+    #     await bot.forward_message(chat_id=message.from_user.id, from_chat_id=channel, message_id=post_id)
+    # except Exception as e:
+    #     await message.reply(f"Xatolik yuz berdi. Postni forward qilishda xatolik yuz berdi: {e}")

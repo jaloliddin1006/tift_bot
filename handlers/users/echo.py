@@ -13,6 +13,12 @@ from keyboards.default.defoult_btn import login_menu
 async def bot_echo(message: types.Message):
     user_id = message.from_user.id
     await message.answer(message.text, reply_markup=login_menu(user="admin", tg_id=user_id))
+    
+    
+@dp.message_handler(state='*')
+async def bot_echo(message: types.Message):
+    user_id = message.from_user.id
+    await message.answer(message.text, reply_markup=login_menu(IsTiftUser(user_id)))
 
 async def subscribe_channel_func(message, result, join_channel):
     await message.answer("Kanallarga to'liq obuna bo'ling", reply_markup=types.ReplyKeyboardRemove())

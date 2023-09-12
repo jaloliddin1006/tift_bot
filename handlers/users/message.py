@@ -68,8 +68,3 @@ async def send_message(message: types.Message, state: FSMContext):
     await message.answer(txt)
     await message.answer(f"Xabaringiz yuborildi", reply_markup=login_menu(user=IsTiftUser(user_id)))
     await state.finish()
-    
-
-
-
-

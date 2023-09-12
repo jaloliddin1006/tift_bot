@@ -3,7 +3,32 @@ from data.config import ADMINS
 from loader import dp, db, bot
 from filters.group_chat import IsGroup
 
-# Group_id = -1001704364861 # new bot tester
+Group_id = -1001704364861 # new bot tester
+
+# create thread group with command /thread_group
+@dp.message_handler(text = "/thread", user_id=ADMINS)
+async def thread_group(message: types.Message):
+    print("/thread")
+    print(message.chat.id)
+    print(message.chat.type)
+    print(message.chat.title)
+    print(message.chat.username)
+    print(message.chat.full_name)
+    await message.answer("Creating thread group...")
+    topic = await bot.create_forum_topic(chat_id=-1001704364861, name="new topic 5")
+    print("ok")
+    await message.answer(f"Thread group created: {topic}")
+    threads = bot.get_forum_threads(chat_id=Group_id)
+    await message.answer(f"Threads: {threads}")
+    
+    # await message.answer("Sending message to thread group...")
+    # await topic.send_message("Hello from thread group!")
+    # await message.answer("Message sent!")
+    # await message.answer("Deleting thread group...")
+    # await topic.leave()
+    # await message.answer("Thread group deleted!")
+
+
 
 @dp.message_handler(chat_type=[types.ChatType.SUPERGROUP, types.ChatType.GROUP])
 async def answer_message(message: types.Message):

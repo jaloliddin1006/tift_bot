@@ -215,6 +215,29 @@ student_part_btn = ReplyKeyboardMarkup(
 
 )
 
+
+message_type_btn = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="📁 Userlarni Exceldan yuklash"), 
+        ],
+        
+        [
+            KeyboardButton(text="👥 To All Users"),           
+            KeyboardButton(text="🏛 To TIFT Users"),           
+            
+        ],
+         [
+                KeyboardButton(text="🔙 Ortga"), 
+                ],
+    ],
+    resize_keyboard=True,
+    input_field_placeholder="Kimga xabar yozmoqchisiz?"
+
+)
+
+
+
 def eslatmani_yoqish(aa):
     eslatma = ReplyKeyboardMarkup(
         keyboard=[

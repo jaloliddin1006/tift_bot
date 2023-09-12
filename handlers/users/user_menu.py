@@ -166,25 +166,31 @@ async def bot_start(message: types.Message):
     # token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyMjc3MDkwLCJpYXQiOjE2OTIxOTA2OTAsImp0aSI6IjMwZmI3NzRjMmJkYTQzN2M4MGU0N2M3MDY5MThmYWQ1IiwidXNlcl9pZCI6Nn0.JONI2_lkAZ2NJ2jIVH5MqFiGBn2cPugHAkurYLOdmgQ"
 
     data = get_student(token=token)
-    txt = f"🎓 <b>Talaba:</b> {data['full_name']}\n"
-    txt += f"🏛 <b>Yo'nalish:</b> {data['direction']}\n"
-    txt += f"⚖️ <b>GPA:</b> {data['gpa']}"
-    await message.answer(f"<b>⚖️ GPA bo'limi:</b>\n\n{txt}", reply_markup=user_menu_func("student"))
-    
+    if data: 
+        txt = f"🎓 <b>Talaba:</b> {data['full_name']}\n"
+        txt += f"🏛 <b>Yo'nalish:</b> {data['direction']}\n"
+        txt += f"⚖️ <b>GPA:</b> {data['gpa']}"
+        await message.answer(f"<b>⚖️ GPA bo'limi:</b>\n\n{txt}", reply_markup=user_menu_func("student"))
+    else:
+        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+
 
 @dp.message_handler(text = "ℹ️ Ma'lumotlarim")
 async def bot_start(message: types.Message):
     user = db.select_tift_user(user_id=message.from_user.id)  
     token = user[8]
     data = get_student(token=token)
-    txt = f"🎓 <b>Talaba:</b> {data['full_name']}\n"
-    txt += f"🏛 <b>Yo'nalish:</b> {data['direction']}\n"
-    txt += f"🔺 <b>Kurs:</b> {data['course_number']}\n"
-    txt += f"👥  <b>Guruh:</b> {data['academic_group']}\n"
-    txt += f"👤 <b>Tyutor:</b> {data['tutor']}\n"
-    txt += f"⚖️ <b>GPA:</b> {data['gpa']}"
-    await message.answer(f"<b>🎓 Talaba haqida ma'lumot:</b>\n\n{txt}", reply_markup=user_menu_func("student"))
-    
+    if data:
+        txt = f"🎓 <b>Talaba:</b> {data['full_name']}\n"
+        txt += f"🏛 <b>Yo'nalish:</b> {data['direction']}\n"
+        txt += f"🔺 <b>Kurs:</b> {data['course_number']}\n"
+        txt += f"👥  <b>Guruh:</b> {data['academic_group']}\n"
+        txt += f"👤 <b>Tyutor:</b> {data['tutor']}\n"
+        txt += f"⚖️ <b>GPA:</b> {data['gpa']}"
+        await message.answer(f"<b>🎓 Talaba haqida ma'lumot:</b>\n\n{txt}", reply_markup=user_menu_func("student"))
+    else:
+        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+
 
 
 ######################################################
