@@ -63,8 +63,10 @@ async def send_message(message: types.Message, state: FSMContext):
     txt += f"Phone: {phone}\n"
     txt += f"Message: {msg}\n"
     msg = db.add_message(user_id, full_name, msg_id)
-    
-    await bot.send_message(chat_id=GroupID, message_thread_id=2704, text=txt)
     await message.answer(txt)
+    if message.from_user.username:
+        txt = "Username: {message.from_user.username}\n" + txt
+        
+    await bot.send_message(chat_id=GroupID, message_thread_id=2704, text=txt)
     await message.answer(f"Xabaringiz yuborildi", reply_markup=login_menu(user=IsTiftUser(user_id)))
     await state.finish()
