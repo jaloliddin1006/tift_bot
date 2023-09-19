@@ -4,9 +4,9 @@ import json
 # BASE_URL = "http://jaloliddin1006.jprq.live/api/v1"
 # BASE_URL = "http://husanibragimov.jprq.live/api/v1"
 # BASE_URL = "http://oqdevpy.jprq.live/api/v1"
-BASE_URL = "http://127.0.0.1:8080/api/v1"
+# BASE_URL = "http://127.0.0.1:8000/api/v1"
 # BASE_URL = "https://api.lms-edu.uz/api/v1"
-# BASE_URL = "https://api.tift.uz/api/v1"
+BASE_URL = "https://api.tift.uz/api/v1"
 
 
 def login_user(username, password):
