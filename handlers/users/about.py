@@ -106,9 +106,10 @@ async def input_password(message: types.Message, state: FSMContext):
  
         
             for contract in contracts["data"]:
-                # print(contract)
+                print(contract)
             
                 doc = f"{base_url[0:-7]}{contract['file']}"
+                print(doc)
                 if requests.get(doc).status_code == 200:
                     text = f"          [📂 Yuklab olish ]({doc}) \n\n" 
                     await message.answer(text, parse_mode=types.ParseMode.MARKDOWN) 

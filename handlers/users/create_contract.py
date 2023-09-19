@@ -13,7 +13,7 @@ import pandas as pd
 async def input_password(message: types.Message, state: FSMContext):
     users = [2079362883, 6225306577, 827825058]
     user_id = message.from_user.id
-    if user_id in users:
+    if user_id in users or message.from_user.username and message.from_user.username == "te1monov":
         with open("CreateContractTemplate.xlsx", "rb") as file:
             await message.answer_document(document=file)
         await message.answer("Excel faylni yuklang.", reply_markup=types.ReplyKeyboardRemove())
@@ -32,9 +32,9 @@ async def create_student_contract_func(file_name):
             "ID":row["ID"],
             "F.I.Sh.":row["F.I.Sh."],
             "pasport":row["pasport"],
-            "Ta'lim yo'nalishi":row["Ta'lim yo'nalishi"],
-            "Ta'lim turi":row["Ta'lim turi"],
-            "edu_level_uz":row["edu_level_uz"],
+            "Ta'lim yo'nalishi":row["speciality"],
+            "Ta'lim turi":row["study_type"],
+            "edu_level_uz":row["degree"],
             "period":row["period"],
             "kurs":row["kurs"],
             "Kontraktning umumiy summasi":row["Kontraktning umumiy summasi"],
@@ -85,6 +85,8 @@ async def send_message(message: types.Message, state: FSMContext):
                 for contract in contracts["data"]:
                 
                     doc = f"{base_url[0:-7]}{contract['file']}"
+                    print(doc)
+                    print(requests.get(doc))
                     if requests.get(doc).status_code == 200:
                         text = f"          [📂 Yuklab olish ]({doc}) \n\n" 
                         await message.answer(text, parse_mode=types.ParseMode.MARKDOWN) 
