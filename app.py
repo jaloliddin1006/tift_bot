@@ -1,5 +1,5 @@
 from aiogram import executor
-from handlers.users.notifications import scheduler
+# from handlers.users.notifications import scheduler
 from loader import dp, db
 import middlewares, filters, handlers
 from utils.notify_admins import on_startup_notify

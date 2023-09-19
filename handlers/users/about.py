@@ -16,7 +16,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command
 from keyboards.default.defoult_btn import login_menu, about_btn
 from keyboards.inline.inline_btn import language_btn, lang_code
-from keyboards.default.defoult_btn import student_part_btn
+from keyboards.default.defoult_btn import student_part_btn, student_contract
 
 
 @dp.message_handler(text = "🔙 Ortga")
@@ -79,7 +79,7 @@ async def input_password(message: types.Message, state: FSMContext):
         #     await message.answer("talaba shartnomasi yuboriladi...")
         # else:
         #     await message.answer(f"⚠️ Siz faqat TIFT talabasi bo'lgan taqdirda shartnomani yuklab olishingiz mumkin. Agar talaba bo'lsangiz tizim bilan bog'lanishingiz kerak: /login",reply_markup=student_part_btn)
-        await message.answer("Shartnomani yuklab olish uchun Pasport seria va raqamingizni yuboring.", reply_markup=types.ReplyKeyboardRemove())
+        await message.answer("Shartnomani yuklab olish uchun Pasport seria va raqamingizni yuboring.", reply_markup=student_contract)
         await state.set_state("passport")
     else:
         await message.answer("Sizga ruxsat mavjud emas")

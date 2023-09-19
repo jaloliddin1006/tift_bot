@@ -5,12 +5,12 @@ from handlers.users.help import IsTiftUser
 from keyboards.default.defoult_btn import message_phone, login_menu, back_btn
 from loader import dp, db, bot
 import asyncio
-from apscheduler.triggers.cron import CronTrigger
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+# from apscheduler.triggers.cron import CronTrigger
+# from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from data.api import get_notifications
 
 
-scheduler = AsyncIOScheduler()
+# scheduler = AsyncIOScheduler()
 
 async def send_notifications(token ):
     noti = get_notifications(token=token)
@@ -63,8 +63,8 @@ async def get_and_send_notifications():
         
 
 
-scheduler.add_job(get_and_send_notifications, CronTrigger(hour=8, minute=00)) 
-scheduler.add_job(get_and_send_notifications, CronTrigger(hour=18, minute=00))  
+# scheduler.add_job(get_and_send_notifications, CronTrigger(hour=8, minute=00)) 
+# scheduler.add_job(get_and_send_notifications, CronTrigger(hour=18, minute=00))  
 
 
 @dp.message_handler(text = "1")

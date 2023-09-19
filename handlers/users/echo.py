@@ -44,3 +44,4 @@ async def subscribe_channel_func(message, result, join_channel):
     #         join_channel.append(cha
     # user_id = message.from_user.id
     # await message.answer(message.text, reply_markup=login_menu(user=IsTiftUser(user_id)))
+

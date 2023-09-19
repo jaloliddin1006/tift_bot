@@ -3,6 +3,7 @@ from . import admin
 from . import channels
 from . import start
 from . import message
+from . import create_contract
 from . import about
 from . import user_menu
 from . import notifications

@@ -215,6 +215,20 @@ student_part_btn = ReplyKeyboardMarkup(
 
 )
 
+student_contract = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="📂 Excel faylni yuklash"), 
+        ],
+         [
+                KeyboardButton(text="🔙 Ortga"), 
+                ],
+    ],
+    resize_keyboard=True,
+    input_field_placeholder="Shartnoma olish uchun"
+
+)
+
 
 message_type_btn = ReplyKeyboardMarkup(
     keyboard=[
