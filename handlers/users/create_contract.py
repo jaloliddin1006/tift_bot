@@ -85,10 +85,9 @@ async def send_message(message: types.Message, state: FSMContext):
                 for contract in contracts["data"]:
                 
                     doc = f"{base_url[0:-7]}{contract['file']}"
-                    print(doc)
-                    print(requests.get(doc))
+                   
                     if requests.get(doc).status_code == 200:
-                        text = f"          [📂 Yuklab olish ]({doc}) \n\n" 
+                        text = f"          [📂 Yuklab olish | {contract['file'].split('/')[-1]}]({doc}) \n\n" 
                         await message.answer(text, parse_mode=types.ParseMode.MARKDOWN) 
                     else:
                         await message.answer("Shartnoma hozircha mavjud emas.")
