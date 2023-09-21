@@ -195,7 +195,7 @@ def create_contract(data):
     data = {
         "students":data
     }
-    
+    # print(data)
     get_me = requests.get(url, json=data)
     # print(get_me.text)
     if get_me.status_code == 200:

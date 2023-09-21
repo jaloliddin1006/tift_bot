@@ -37,7 +37,7 @@ class BigBrother(BaseMiddleware):
                 # print(await bot.get_chat(channel_id[0]))
                 status = await subscription.check(user_id=user,
                                                 channel=channel_id[0])
-                print(status)
+                # print(status)
                 final_status *= status
                 channel = await bot.get_chat(channel_id[0])
                     
