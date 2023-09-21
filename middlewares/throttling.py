@@ -94,7 +94,8 @@ class ThrottlingMiddleware(BaseMiddleware):
 
         if throttled.exceeded_count <= 2:
 
-            await message.reply('Too many requests! ')
+            # await message.reply('Too many requests! ')
+            pass
 
 
         # Sleep.
@@ -111,4 +112,5 @@ class ThrottlingMiddleware(BaseMiddleware):
 
         if thr.exceeded_count == throttled.exceeded_count:
 
-            await message.reply('Unlocked.')
+            # await message.reply('Unlocked.')
+            pass
