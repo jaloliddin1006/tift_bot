@@ -6,7 +6,7 @@ from data.api import login_user
 
 from data.config import ADMINS
 from loader import dp, db, bot
-
+from data.api import get_book
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command
 from keyboards.default.defoult_btn import login_menu, back_btn  
@@ -17,8 +17,16 @@ from handlers.users.help import IsTiftUser
 
 @dp.message_handler(CommandStart(), state="*")
 async def bot_start(message: types.Message, state=FSMContext):
-    user_id = message.from_user.id    
-    await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
+    if message.text == "/start":
+        user_id = message.from_user.id    
+        await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
+    else:
+        book_slug = message.text.split(" ")[-1]
+        book = get_book(book_slug)
+      
+        if book[1]:
+            await message.answer_photo(types.InputFile.from_url(book[0]+book[1]['photo']), caption=f"<b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
+            await message.answer_document(types.InputFile.from_url(book[0]+book[1]['file']), caption=f"<b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
     await state.finish()
     
     # all = db.select_user_all_data(telegram_id=message.from_user.id)

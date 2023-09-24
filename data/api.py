@@ -7,7 +7,7 @@ import json
 # BASE_URL = "http://127.0.0.1:8000/api/v1"
 # BASE_URL = "https://api.lms-edu.uz/api/v1"
 BASE_URL = "https://api.tift.uz/api/v1"
-
+LIBRARY_BASE_URL =  "http://127.0.0.1:8000"
 
 def login_user(username, password):
     url = f"{BASE_URL}/login/"
@@ -204,8 +204,33 @@ def create_contract(data):
     return None
 
 
+def get_library_category(pk=None):
+    url = f"{LIBRARY_BASE_URL}/category/{pk}/" if pk else f"{LIBRARY_BASE_URL}/category/"
+    get_me = requests.get(url)
+    if get_me.status_code == 200:
+        get_data = json.loads(get_me.text)
+        return get_data
+    return None
 
 
+def get_books(pk):
+    url = f"{LIBRARY_BASE_URL}/books/{pk}/"
+    get_me = requests.get(url)
+    if get_me.status_code == 200:
+        get_data = json.loads(get_me.text)
+        return get_data
+    return None
+
+def get_book(slug):
+    url = f"{LIBRARY_BASE_URL}/book/{slug}/"
+    get_me = requests.get(url)
+    if get_me.status_code == 200:
+        get_data = json.loads(get_me.text)
+        return [LIBRARY_BASE_URL, get_data]
+    return [LIBRARY_BASE_URL, None]
+
+# a = get_library_category()
+# print(a)
 
 # def create_feedback(body, user_id):
 #     url = f"{BASE_URL}/feedbacks"

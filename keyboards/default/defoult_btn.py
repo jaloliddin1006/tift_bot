@@ -27,6 +27,9 @@ def login_menu(user=False, tg_id=None):
             [
                 KeyboardButton(text="📨 Xabar yozish"), 
             ],
+            [
+                KeyboardButton(text="📚 Elektron kutubxona"), 
+            ],
             loginusermenu,
             [
                 # KeyboardButton(text="🌐 Tilni o'zgartirish"),           
@@ -249,6 +252,20 @@ message_type_btn = ReplyKeyboardMarkup(
     input_field_placeholder="Kimga xabar yozmoqchisiz?"
 
 )
+
+
+
+def get_book_category_btn(books_category):
+
+    books_category_btn = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True, input_field_placeholder="Bo'limlardan birini tanlang")
+    
+    for i in books_category:
+        books_category_btn.insert(KeyboardButton(text=f"{i['name']}"))
+        
+    books_category_btn.add(KeyboardButton(text=f"🔙 Ortga"))
+    
+    return books_category_btn
+
 
 
 

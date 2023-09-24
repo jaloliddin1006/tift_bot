@@ -1,4 +1,5 @@
 from . import help
+from . import library
 from . import admin
 from . import channels
 from . import start
