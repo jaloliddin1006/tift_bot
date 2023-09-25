@@ -69,13 +69,15 @@ async def input_password(message: types.Message, state: FSMContext):
                     desc = title+ "\n\n"
                     if i['description']:
                         desc += i['description']
-                    if i['photo']:
-                        await message.answer_photo(types.InputFile.from_url(i['photo']), caption=title)
+                    # if i['photo']:
+                    #     await message.answer_photo(types.InputFile.from_url(i['photo']), caption=title)
                     response = requests.get(i['file'])
                     if response.status_code == 200:
                         await message.answer_document(types.InputFile.from_url(i['file']), caption=desc)
+                        # await message.answer(f"📚  [{i['title']}]({i['file']}) ", parse_mode=types.ParseMode.MARKDOWN)
                     else:
-                        await message.answer( "Failed to fetch the document from the URL.")
+                        # await message.answer( "Failed to fetch the document from the URL.")
+                        pass
                     
             else:
                 await message.answer("Bo'limda kitoblar mavjud emas")

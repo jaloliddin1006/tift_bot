@@ -8,6 +8,7 @@ import json
 # BASE_URL = "https://api.lms-edu.uz/api/v1"
 BASE_URL = "https://api.tift.uz/api/v1"
 LIBRARY_BASE_URL = "https://library.tift.uz"
+# LIBRARY_BASE_URL = "http://127.0.0.1:8000"
 
 def login_user(username, password):
     url = f"{BASE_URL}/login/"
@@ -223,6 +224,15 @@ def get_books(pk):
 
 def get_book(slug):
     url = f"{LIBRARY_BASE_URL}/book/{slug}/"
+    get_me = requests.get(url)
+    if get_me.status_code == 200:
+        get_data = json.loads(get_me.text)
+        return [LIBRARY_BASE_URL, get_data]
+    return [LIBRARY_BASE_URL, None]
+
+
+def get_qrcodes():
+    url = f"{LIBRARY_BASE_URL}/qrcodes/"
     get_me = requests.get(url)
     if get_me.status_code == 200:
         get_data = json.loads(get_me.text)

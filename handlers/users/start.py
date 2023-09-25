@@ -25,7 +25,7 @@ async def bot_start(message: types.Message, state=FSMContext):
         book = get_book(book_slug)
       
         if book[1]:
-            await message.answer_photo(types.InputFile.from_url(book[0]+book[1]['photo']), caption=f"<b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
+            # await message.answer_photo(types.InputFile.from_url(book[0]+book[1]['photo']), caption=f"<`b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
             await message.answer_document(types.InputFile.from_url(book[0]+book[1]['file']), caption=f"<b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
     await state.finish()
     

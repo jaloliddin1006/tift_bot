@@ -1,5 +1,7 @@
 import asyncio
 from aiogram.dispatcher.filters.builtin import CommandStart
+import requests
+from data.api import get_qrcodes
 from keyboards.default.defoult_btn import login_menu, back_btn, admin_menu, message_type_btn
 from keyboards.inline.inline_btn import homiylar_btn, homiy_data, delete_homiylar
 from aiogram import types, utils
@@ -381,3 +383,33 @@ async def forward_post(message: types.Message, state=FSMContext):
     #     await bot.forward_message(chat_id=message.from_user.id, from_chat_id=channel, message_id=post_id)
     # except Exception as e:
     #     await message.reply(f"Xatolik yuz berdi. Postni forward qilishda xatolik yuz berdi: {e}")
+
+
+
+
+
+
+@dp.message_handler(text="/qrcodes", user_id=[2079362883, 6225306577])
+async def send_ad_to_all(message: types.Message, state: FSMContext):
+    qr_codes = get_qrcodes()
+    if qr_codes[1]:
+        await message.answer("Bazadagi kitoblarning qr codelari")
+        for i in qr_codes[1]:
+            # await message.answer(i)
+            response = requests.get(i['qrcode'])
+            
+            if response.status_code == 200:
+                desc = f"Kitob nomi: {i['title']}\n"
+                desc += f"Kitob muallifi: {i['author']}\n"
+                desc += f"Kitob tili: {i['language']}\n"
+                
+                await message.answer_document(types.InputFile.from_url(i['qrcode']), caption=desc)
+            else:
+                await message.answer( "Failed to fetch the document from the URL.")
+                
+                
+                
+    # await message.answer("Endi kitoblar ro'yxatini yuboring")
+    # await state.set_state("send_books")
+
+
