@@ -7,7 +7,7 @@ import json
 # BASE_URL = "http://127.0.0.1:8000/api/v1"
 # BASE_URL = "https://api.lms-edu.uz/api/v1"
 BASE_URL = "https://api.tift.uz/api/v1"
-LIBRARY_BASE_URL =  "http://127.0.0.1:8000"
+LIBRARY_BASE_URL = "https://library.tift.uz"
 
 def login_user(username, password):
     url = f"{BASE_URL}/login/"
