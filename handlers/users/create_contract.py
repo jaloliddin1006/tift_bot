@@ -11,7 +11,7 @@ import pandas as pd
 
 @dp.message_handler(text ="📂 Excel faylni yuklash", state="passport")
 async def input_password(message: types.Message, state: FSMContext):
-    users = [2079362883, 6225306577, 827825058]
+    users = [2079362883, 6225306577, 827825058, 5246346903]
     user_id = message.from_user.id
     if user_id in users or message.from_user.username and message.from_user.username == "te1monov":
         with open("CreateContractTemplate.xlsx", "rb") as file:
