@@ -33,8 +33,7 @@ async def thread_group(message: types.Message):
 
 @dp.message_handler(chat_type=[types.ChatType.SUPERGROUP, types.ChatType.GROUP])
 async def answer_message(message: types.Message):
-    # await message.answer(message)
-    # print(message)
+  
     if message.reply_to_message:
         await message.answer(f"reply message: {message}")
         if message.reply_to_message.message_thread_id == 2702:
