@@ -3,7 +3,8 @@ from data.config import ADMINS
 from loader import dp, db, bot
 from filters.group_chat import IsGroup
 
-Group_id = -1001704364861 # new bot tester
+# Group_id = -1001704364861 # new bot tester
+Group_id = -1001583537353
 
 # create thread group with command /thread_group
 @dp.message_handler(text = "/thread", user_id=ADMINS)
@@ -32,11 +33,10 @@ async def thread_group(message: types.Message):
 
 @dp.message_handler(chat_type=[types.ChatType.SUPERGROUP, types.ChatType.GROUP])
 async def answer_message(message: types.Message):
-    await message.answer(message)
+    # await message.answer(message)
     # print(message)
     if message.reply_to_message:
         await message.answer(f"reply message: {message}")
-        print(message)
         if message.reply_to_message.message_thread_id == 2702:
             print("ok 2702")
             pass
@@ -46,10 +46,10 @@ async def answer_message(message: types.Message):
             answer = message.text
             msg_id = message.reply_to_message.text.split("#")[1]
             user_id = db.select_message(msg_id=msg_id)[1]
-            txt = f"ID: #{msg_id}\n"
-            txt += f"Answer: {answer}"
+            # txt = f"ID: #{msg_id}\n"
+            txt = f"Answer: {answer}"
             await bot.send_message(chat_id=user_id, text=txt)
-            print("answer to question")
+            await message.reply("Answer sent!")
         
         elif not message.reply_to_message.message_thread_id:
             # print(message.reply_to_message)

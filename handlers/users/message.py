@@ -5,6 +5,7 @@ from data.config import GroupID
 from handlers.users.help import IsTiftUser
 from keyboards.default.defoult_btn import message_phone, login_menu, back_btn
 from loader import dp, db, bot
+import uuid
 
 
 @dp.message_handler(text = '📨 Xabar yozish')
@@ -56,17 +57,18 @@ async def send_message(message: types.Message, state: FSMContext):
     full_name = data['full_name']
     phone = data['phone']
     msg = message.text
-    msg_id = message.message_id
+    msg_id = uuid.uuid4().hex[:16]
     
-    txt = f"ID: #{msg_id}#\n"
-    txt += f"User: {full_name}\n"
-    txt += f"Phone: {phone}\n"
+    txt = f"User: {full_name}\n"
+    txt += f"Phone: <code>{phone}</code>\n"
     txt += f"Message: {msg}\n"
     msg = db.add_message(user_id, full_name, msg_id)
     await message.answer(txt)
     if message.from_user.username:
-        txt = "Username: {message.from_user.username}\n" + txt
-        
-    await bot.send_message(chat_id=GroupID, message_thread_id=2704, text=txt)
-    await message.answer(f"Xabaringiz yuborildi", reply_markup=login_menu(user=IsTiftUser(user_id)))
+        txt = f"Username: @{message.from_user.username}\n" + txt
+    txt1 = f"ID: #{msg_id}#\n" + txt
+    
+    
+    await bot.send_message(chat_id=GroupID, message_thread_id=2, text=txt1)
+    await message.answer(f"Xabaringiz yuborildi ✅, \nXabaringizga tez orada javob beramiz.", reply_markup=login_menu(user=IsTiftUser(user_id)))
     await state.finish()

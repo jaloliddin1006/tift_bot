@@ -109,9 +109,12 @@ def get_student_schedule(token):
             'Authorization': f"Bearer {token}",
         }
     get_ = requests.get(url, headers=get_header)
-    get_data = json.loads(get_.text)
- 
-    return get_data
+    # print("request: ", get_.text)
+    if get_.status_code == 200:
+        get_data = json.loads(get_.text)
+    
+        return get_data
+    return None
 
 
 

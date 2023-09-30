@@ -63,52 +63,78 @@ async def bot_start(message: types.Message):
 
 @dp.message_handler(text = "📆 Dars jadvalim")
 async def bot_start(message: types.Message):
-    user = db.select_tift_user(user_id=message.from_user.id) 
-    token = user[8]
-    data = get_student_schedule(token)
-    sorted_data = sorted(data, key=lambda x: x['start'])
-    if data:
-        dayys = {
-            'Monday': 'Dushanba',
-            'Tuesday': 'Seshanba',
-            'Wednesday': 'Chorshanba',
-            'Thursday': 'Payshanba',
-            'Friday': 'Juma',
-            'Saturday': 'Shanba',
-            'Sunday': 'Yakshanba'
-        }
-        day = ""
-        week = ""
-        for table in sorted_data:
+    # user = db.select_tift_user(user_id=message.from_user.id) 
+    # token = user[8]
+    # data = get_student_schedule(token)
+    # # print("data: ", data)
+    # # sorted_data = sorted(data, key=lambda x: x['start'])
+    
+    # if data:
+    #     for i in data['results']:
+    #         print(i)
+    #         print("---------------------------------------------"*2)
+    #     dayys = {
+    #         'Monday': 'Dushanba',
+    #         'Tuesday': 'Seshanba',
+    #         'Wednesday': 'Chorshanba',
+    #         'Thursday': 'Payshanba',
+    #         'Friday': 'Juma',
+    #         'Saturday': 'Shanba',
+    #         'Sunday': 'Yakshanba'
+    #     }
+    #     week = ""
+    #     for para in data:
+    #         day_data = ""
+    #         para_num = para['name']
+    #         start = para['start_time']
+    #         end = para['end_time']
+            
+    #         for day in para['timetible']:
+    #             week_day = dayys[day['weekday']]
+    #             lessons = ""
+    #             if day['groups']:
+    #                 for lesson in day['groups']:
+    #                     group = lesson['group']
+    #                     room = lesson['room']
+    #                     science = lesson['science']
+    #                     group_type = lesson['group_type']
+    #                 lesson += f"👥 <b>Patok:</b> {group}\n"
+    #                 lesson += f"🏢 <b>Xona:</b> {room}\n"
+    #                 lesson += f"📗 <b>Fan:</b> {science}\n"
+    #                 lesson += f"✍🏻 <b>Turi:</b> {group_type}\n\n"
+                    
+                    
+                    
+                
         
-            today = datetime.datetime.strptime(str(table['start']), "%Y-%m-%dT%H:%M:%S" )
+    #     #     today = datetime.datetime.strptime(str(table['start']), "%Y-%m-%dT%H:%M:%S" )
             
-            weekday = dayys[today.strftime('%A')]
-            room = table['title'].split()[-1]
-            group = table['title'].split()[-2]
-            para = table['para']
-            science = " ".join(table['title'].split(" ")[0:-3])
+    #         # weekday = dayys[]
+    #     #     room = table['title'].split()[-1]
+    #     #     group = table['title'].split()[-2]
+    #     #     para = table['para']
+    #     #     science = " ".join(table['title'].split(" ")[0:-3])
             
-            schedule_table = ""
+    #     #     schedule_table = ""
             
-            if week == weekday:
-                pass
-            else:
-                week = weekday
-                schedule_table += f"              <b> ||    {week}     ||</b>\n"
-            schedule_table += f"⏲ <b>Para:</b> {para}\n"
-            schedule_table += f"🏢 <b>Xona:</b> {room}\n"
-            schedule_table += f"👥 <b>Patok:</b> {group}\n"
-            schedule_table += f"📗 <b>Fan:</b> {science}\n\n"
+    #     #     if week == weekday:
+    #     #         pass
+    #     #     else:
+    #     #         week = weekday
+    #     #         schedule_table += f"              <b> ||    {week}     ||</b>\n"
+    #     #     schedule_table += f"⏲ <b>Para:</b> {para}\n"
+    #     #     schedule_table += f"🏢 <b>Xona:</b> {room}\n"
+    #     #     schedule_table += f"👥 <b>Patok:</b> {group}\n"
+    #     #     schedule_table += f"📗 <b>Fan:</b> {science}\n\n"
             
-            day += schedule_table 
+    #     #     day += schedule_table 
         
         
-        await message.answer("       📆 Dars jadvalim \n\n"+day)
+    #     await message.answer("       📆 Dars jadvalim \n\n"+day)
 
         
-    else:
-        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+    # else:
+    await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
 
 # {'results': {'monday': [{'id': 3, 'group': 'INM-001', 'room': 'A-302', 'group_type': 'lecture', 'group_science': 'Iqtisodiyot nazariyasi', 'updated_at': '2023-08-25T16:48:50.670631+05:00', 'created_at': '2023-08-25T16:48:50.670678+05:00', 'weekday': 'monday', 'types': 'full', 'para': 3, 'semester': 2}], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [{'id': 4, 'group': 'IUMM-001-L1', 'room': 'A-300', 'group_type': 'practical', 'group_science': 'Iqtisodchilar uchun matematika', 'updated_at': '2023-08-25T20:23:44.791512+05:00', 'created_at': '2023-08-25T20:23:44.791549+05:00', 'weekday': 'friday', 'types': 'full', 'para': 1, 'semester': 2}], 'saturday': []}}
 @dp.message_handler(text = "⚠️ Topshirilmagan vazifalarim")
