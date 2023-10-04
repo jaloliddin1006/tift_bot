@@ -35,7 +35,7 @@ async def thread_group(message: types.Message):
 async def answer_message(message: types.Message):
   
     if message.reply_to_message:
-        await message.answer(f"reply message: {message}")
+        # await message.answer(f"reply message: {message}")
         if message.reply_to_message.message_thread_id == 2702:
             print("ok 2702")
             pass

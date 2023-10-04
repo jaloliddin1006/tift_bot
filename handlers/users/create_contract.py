@@ -13,7 +13,8 @@ import pandas as pd
 async def input_password(message: types.Message, state: FSMContext):
     users = [2079362883, 6225306577, 827825058, 5246346903]
     user_id = message.from_user.id
-    if user_id in users or message.from_user.username and message.from_user.username == "te1monov":
+    username = message.from_user.username 
+    if user_id in users or message.from_user.username and (username == "te1monov" or username == "tift_shartnoma" or username == "shartnoma_tift"):
         with open("CreateContractTemplate.xlsx", "rb") as file:
             await message.answer_document(document=file)
         await message.answer("Excel faylni yuklang.", reply_markup=types.ReplyKeyboardRemove())
