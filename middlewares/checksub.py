@@ -81,4 +81,4 @@ class BigBrother(BaseMiddleware):
             print("=======================", err)
             # await db.delete_channels()
             
-            await bot.send_message(ADMINS[0], "Ushbu bot qaysidir kanaldan chiqarib yuborildi, Botning kanalda adminligiga to'laqonli ishonch hosil qiling. Xavfsizlik uchun barcha ulangan kanallar majburiy a'zolik ro'yxatidan o'chirildi. ")
+            await bot.send_message(ADMINS[0], f"Error:  {err}")
