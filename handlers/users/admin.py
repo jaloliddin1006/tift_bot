@@ -176,8 +176,8 @@ async def send_ad_to_all(message: types.Message, state = FSMContext):
             channel_id = message.forward_from_chat.id
             channel_name = message.forward_from_chat.title
             channel_username = message.forward_from_chat.username if message.forward_from_chat.username else channel_id
-            channel = await bot.get_chat(channel_id)
-            channel_link = channel['invite_link']
+            channel = await bot.get_chat(str(channel_id))
+            channel_link = await channel.export_invite_link()
             
             text = f"<b>ID:</b> {channel_id}\n"
             text += f"<b>Name:</b> {channel_name}\n"
@@ -354,26 +354,26 @@ async def send_ad_to_all(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state="forward_message", content_types=types.ContentTypes.ANY)
 async def forward_post(message: types.Message, state=FSMContext):
-    # post_id = message.forward_from_message_id
-    # channel = message.forward_from_chat.id
-    # # print(message)
+    post_id = message.forward_from_message_id
+    channel = message.forward_from_chat.id
     # print(post_id, channel)
     
     # # forward message to users 
-    # all_users = db.select_all_users("BotUsers")
-    # failed_users = 0
+    all_users = db.select_all_users("BotUsers")
+    failed_users = 0
     
-    # for user in all_users:
-    #     try:
-    #         await bot.forward_message(chat_id=user[1], from_chat_id=str(channel), message_id=post_id)
-    #         await bot.forward_message(chat_id=user[1],)
-    #         await asyncio.sleep(0.05)
-    #     except Exception as err:
-    #         print(err)
-    #         failed_users += 1
-    #         continue
-    # await message.answer(f"Barcha userlarga xabar yuborildi\n\nJami userlar: {len(all_users)}\n\nXabar yetib bormadi: {failed_users}", reply_markup=admin_menu)
-    await message.answer("xozir ishlamaydi", reply_markup=admin_menu)
+    for user in all_users:
+        try:
+          
+            await bot.forward_message(chat_id=user[1], from_chat_id=str(channel), message_id=post_id)
+            # await bot.forward_message(chat_id=user[1],)
+            await asyncio.sleep(0.05)
+        except Exception as err:
+            print(err)
+            failed_users += 1
+            # continue
+    await message.answer(f"Barcha userlarga xabar yuborildi\n\nJami userlar: {len(all_users)}\n\nXabar yetib bormadi: {failed_users}", reply_markup=admin_menu)
+    # await message.answer("xozir ishlamaydi", reply_markup=admin_menu)
     await state.finish()
     
     

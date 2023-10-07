@@ -10,6 +10,20 @@ from data.config import ADMINS
 from utils.misc import subscription
 from loader import bot, db
 
+class AuthMiddleware(BaseMiddleware):
+    async def on_pre_process_message(self, message: types.Message, data: dict):
+        # Bu joyda foydalanuvchi haqida ma'lumotlar olish kerak.
+        user_id = message.from_user.id
+        CHANNELS = db.select_all_channels()[0]
+
+        # Foydalanuvchi haqida olingan ma'lumotlar bilan majburiy a'zo qilishingizni tekshirish kerak.
+        is_member = await  subscription.check(user_id=user_id,
+                                                channel=CHANNELS[0])
+
+        if not is_member:
+            await message.answer("Siz kanallarga majburiy a'zo emasligingiz uchun bu botni ishlatishingiz mumkin emas.")
+            return await bot.leave_chat(message.chat.id)
+    
 
 class BigBrother(BaseMiddleware):
     async def on_pre_process_update(self, update: types.Update, data: dict):  
@@ -57,6 +71,8 @@ class BigBrother(BaseMiddleware):
 
             if not final_status:
                 await subscribe_channel_func(update.message, result, join_channel)
+                return await bot.leave_chat(update.message.chat.id)
+            
                 # await update.message.answer("Kanallarga to'liq obuna bo'ling", reply_markup=ReplyKeyboardRemove())
                 # await update.message.answer(result, disable_web_page_preview=True, reply_markup=check_member_button(join_channel))
             

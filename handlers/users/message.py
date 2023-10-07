@@ -40,7 +40,7 @@ async def input_password(message: types.Message, state: FSMContext):
 async def get_phone(message: types.Message, state: FSMContext):
     phone = message.contact.phone_number    
     await state.update_data(phone=phone)
-    await message.answer(f"Xabar/Ariza matningizni kiriting:", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer(f"Xabar/Ariza matningizni kiriting\n (Xabar matningizni to'liq qilib metta xabarda yoritib berin):", reply_markup=types.ReplyKeyboardRemove())
     await state.set_state("message")
 
 @dp.message_handler(state="phone")

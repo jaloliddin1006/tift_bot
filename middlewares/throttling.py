@@ -53,7 +53,7 @@ class ThrottlingMiddleware(BaseMiddleware):
                             db.logout_token(user_id=message.from_user.id, token=None)
                             msg = await message.answer("LMS bilan aloqa uzuldi, qaytadan login qiling. 👉 /login", reply_markup=login_menu(user=False))
                             await bot.pin_chat_message(chat_id=msg.chat.id, message_id=msg.message_id, disable_notification=False)
-            
+        
             
 
         handler = current_handler.get()

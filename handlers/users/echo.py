@@ -24,15 +24,15 @@ async def subscribe_channel_func(message, result, join_channel):
     await message.answer("Kanallarga to'liq obuna bo'ling", reply_markup=types.ReplyKeyboardRemove())
     await message.answer(result, disable_web_page_preview=True, reply_markup=check_member_button(join_channel))
     
-    # chat = await bot.get_chat('@new_bot_test_group')
-    # #    user = await bot.get_chat_member(chat_id="@new_bot_test_group", user_id=message.from_user.id)
-    # isuser = await bot.get_chat_member(chat_id="-1001704364861", user_id=message.from_user.id) #status owner, administrator, member
-    # # invite_link = await chat.export_invite_link()
-    # # invite_link = chat['invite_link']
-    # # print(chat)
-    # # await message.answer(isuser)
-    # # status = await bot.get_chat_member("-1001704364861", message.from_user.id)
-    # # member_count = await bot.get_chat_member_count(chat_id=chat.id) ## member count
+    chat = await bot.get_chat('@new_bot_test_group')
+    #    user = await bot.get_chat_member(chat_id="@new_bot_test_group", user_id=message.from_user.id)
+    isuser = await bot.get_chat_member(chat_id="-1001704364861", user_id=message.from_user.id) #status owner, administrator, member
+    invite_link = await chat.export_invite_link()
+    invite_link = chat['invite_link']
+    print(chat)
+    await message.answer(isuser)
+    status = await bot.get_chat_member("-1001704364861", message.from_user.id)
+    member_count = await bot.get_chat_member_count(chat_id=chat.id) ## member count
     
     
     # await message.answer(message.text)
@@ -45,3 +45,14 @@ async def subscribe_channel_func(message, result, join_channel):
     # user_id = message.from_user.id
     # await message.answer(message.text, reply_markup=login_menu(user=IsTiftUser(user_id)))
 
+
+
+
+
+async def check_membership(user_id):
+    # Foydalanuvchi haqida ma'lumotlarni olish va majburiy a'zo bo'lishini tekshirish
+    # Ma'lumotlar bazasidan yoki Telegram API orqali tekshirish mumkin
+
+    # Masalan, agar foydalanuvchi kanalga majburiy a'zo bo'lsa True qaytaring,
+    # aks holda False qaytaring.
+    return True  # Bu o'rniga tegishli kodni yozing
