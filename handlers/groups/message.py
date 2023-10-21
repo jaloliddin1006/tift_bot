@@ -8,10 +8,12 @@ from filters.group_chat import IsGroup
 async def get_about(message: types.Message):
     if message.reply_to_message:
         if message.reply_to_message.forward_sender_name:
+            user_ = db.select_bot_user(name=message.reply_to_message.forward_sender_name)
             user = db.select_new_message(nick_name=message.reply_to_message.forward_sender_name)
         else:
+            user_ = db.select_bot_user(telegram_id=message.reply_to_message.forward_from.id)
             user = db.select_new_message(telegram_id=message.reply_to_message.forward_from.id)
-        await message.reply(f"User haqida ma'lumotlar:\n\nID: {user[0]}\nTelegram ID: {user[1]}\nNick Name: {user[2]}\nFull Name: {user[3]}\nTelegram Username: {user[5]}\nTelegram raqami: {user[4]}\nUnvoni: {user[6]}")
+        await message.reply(f"User haqida ma'lumotlar:\n\nTelegram ID: {user[0]}\nNick Name: {user[2]}\nFull Name: {user[1]}\nUsername: @{user_[3]}\nTelefon: {user[3]}")
     else:
         await message.reply("Biror xabarni 'reply' qilib /about buyrug'ini kiriting:")
 

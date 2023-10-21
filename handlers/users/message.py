@@ -60,7 +60,7 @@ async def get_phone(message: types.Message, state: FSMContext):
     
 
 
-@dp.message_handler(state="message")
+@dp.message_handler(state="message", content_types=types.ContentType.ANY)
 async def send_message(message: types.Message, state: FSMContext):
     user_id = message.from_user.id  
 

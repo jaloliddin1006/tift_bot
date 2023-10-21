@@ -76,7 +76,7 @@ class Database:
             telegram_id integer NOT NULL,
             full_name varchar(255) NOT NULL,
             nick_name varchar(225),
-            phone varchar(25),
+            phone varchar(25)
             );
 """
         self.execute(sql, commit=True)
