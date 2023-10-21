@@ -66,78 +66,81 @@ async def bot_start(message: types.Message):
 
 @dp.message_handler(text = "📆 Dars jadvalim")
 async def bot_start(message: types.Message):
-    user = db.select_tift_user(user_id=message.from_user.id) 
-    token = user[8]
-    data = get_student_schedule(token)
-    # print("data: ", data)
-    # sorted_data = sorted(data, key=lambda x: x['start'])
-    
-    if data:
+    try:
+        user = db.select_tift_user(user_id=message.from_user.id) 
+        token = user[8]
+        data = get_student_schedule(token)
+        # print("data: ", data)
+        # sorted_data = sorted(data, key=lambda x: x['start'])
         
-        # Define a dictionary to map weekdays to their respective names in your language
-        dayys = {
-            'Monday': 'Dushanba',
-            'Tuesday': 'Seshanba',
-            'Wednesday': 'Chorshanba',
-            'Thursday': 'Payshanba',
-            'Friday': 'Juma',
-            'Saturday': 'Shanba',
-            'Sunday': 'Yakshanba'
-        }
-
-        ddy = {
+        if data:
             
-            'Monday': {},
-            'Tuesday': {},
-            'Wednesday': {},
-            'Thursday': {},
-            'Friday': {},
-            'Saturday': {},
-            'Sunday': {}
-            
-        }
+            # Define a dictionary to map weekdays to their respective names in your language
+            dayys = {
+                'Monday': 'Dushanba',
+                'Tuesday': 'Seshanba',
+                'Wednesday': 'Chorshanba',
+                'Thursday': 'Payshanba',
+                'Friday': 'Juma',
+                'Saturday': 'Shanba',
+                'Sunday': 'Yakshanba'
+            }
 
-        # Initialize a dictionary to store lessons for Monday
-        lessons_by_day = ddy.copy()
-        for para in data['results']:
-            
-            for day in para['timetable']:
-                # if day['weekday'] == 'Monday':
-                lessons_by_day[day['weekday']][para['name']] = day['groups']
+            ddy = {
+                
+                'Monday': {},
+                'Tuesday': {},
+                'Wednesday': {},
+                'Thursday': {},
+                'Friday': {},
+                'Saturday': {},
+                'Sunday': {}
+                
+            }
 
-        # Print the formatted schedule for Monday
-        # print("Dushanba kuniga tegishli fanlar:")
-        week_schedule = ""
-        for i,j in lessons_by_day.items():
-            # if j['groups']:
-            # print(f"{i} kuniga tegishli fanlar:")
-            # print(j)
-            daily_lesson = ""
-            for para_num, groups in j.items():
-                lesson = ""
-                if groups:
-                    start_time = next((para['start_time'] for para in data['results'] if para['name'] == para_num), '')
-                    end_time = next((para['end_time'] for para in data['results'] if para['name'] == para_num), '')
-                    
-                    lesson += f"{para_num} - para : {start_time} - {end_time}\n"
-                    for group in groups:
-                        name = group['group']
-                        room = group['room']
-                        science = group['science']
-                        group_type = group['group_type']
-                        lesson += f"👥 <b>Patok:</b> {name}\n"
-                        lesson += f"🏢 <b>Xona:</b> {room}\n"
-                        lesson += f"📗 <b>Fan:</b> {science}\n"
-                        lesson += f"✍🏻 <b>Turi:</b> {group_type}\n\n"
-                    # print(lesson)
-                if lesson:
-                    daily_lesson += lesson
-            if daily_lesson:
-                week_schedule += f"{dayys[i]} kuniga tegishli fanlar:\n{daily_lesson}\n"
-        await message.answer("       📆 Dars jadvalim \n\n"+week_schedule)
+            # Initialize a dictionary to store lessons for Monday
+            lessons_by_day = ddy.copy()
+            for para in data['results']:
+                
+                for day in para['timetable']:
+                    # if day['weekday'] == 'Monday':
+                    lessons_by_day[day['weekday']][para['name']] = day['groups']
 
-    else:
-        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+            # Print the formatted schedule for Monday
+            # print("Dushanba kuniga tegishli fanlar:")
+            week_schedule = ""
+            for i,j in lessons_by_day.items():
+                # if j['groups']:
+                # print(f"{i} kuniga tegishli fanlar:")
+                # print(j)
+                daily_lesson = ""
+                for para_num, groups in j.items():
+                    lesson = ""
+                    if groups:
+                        start_time = next((para['start_time'] for para in data['results'] if para['name'] == para_num), '')
+                        end_time = next((para['end_time'] for para in data['results'] if para['name'] == para_num), '')
+                        
+                        lesson += f"{para_num} - para : {start_time} - {end_time}\n"
+                        for group in groups:
+                            name = group['group']
+                            room = group['room']
+                            science = group['science']
+                            group_type = group['group_type']
+                            lesson += f"👥 <b>Patok:</b> {name}\n"
+                            lesson += f"🏢 <b>Xona:</b> {room}\n"
+                            lesson += f"📗 <b>Fan:</b> {science}\n"
+                            lesson += f"✍🏻 <b>Turi:</b> {group_type}\n\n"
+                        # print(lesson)
+                    if lesson:
+                        daily_lesson += lesson
+                if daily_lesson:
+                    week_schedule += f"{dayys[i]} kuniga tegishli fanlar:\n{daily_lesson}\n"
+            await message.answer("       📆 Dars jadvalim \n\n"+week_schedule)
+
+        else:
+            await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+    except:
+        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi(error)")
 
 # {'results': {'monday': [{'id': 3, 'group': 'INM-001', 'room': 'A-302', 'group_type': 'lecture', 'group_science': 'Iqtisodiyot nazariyasi', 'updated_at': '2023-08-25T16:48:50.670631+05:00', 'created_at': '2023-08-25T16:48:50.670678+05:00', 'weekday': 'monday', 'types': 'full', 'para': 3, 'semester': 2}], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [{'id': 4, 'group': 'IUMM-001-L1', 'room': 'A-300', 'group_type': 'practical', 'group_science': 'Iqtisodchilar uchun matematika', 'updated_at': '2023-08-25T20:23:44.791512+05:00', 'created_at': '2023-08-25T20:23:44.791549+05:00', 'weekday': 'friday', 'types': 'full', 'para': 1, 'semester': 2}], 'saturday': []}}
 @dp.message_handler(text = "⚠️ Topshirilmagan vazifalarim")
@@ -206,19 +209,22 @@ async def bot_start(message: types.Message):
 
 @dp.message_handler(text = "ℹ️ Ma'lumotlarim")
 async def bot_start(message: types.Message):
-    user = db.select_tift_user(user_id=message.from_user.id)  
-    token = user[8]
-    data = get_student(token=token)
-    if data:
-        txt = f"🎓 <b>Talaba:</b> {data['full_name']}\n"
-        txt += f"🏛 <b>Yo'nalish:</b> {data['direction']}\n"
-        txt += f"💲 <b>Kontrak miqdori:</b> {data['direction_contract']}\n"
-        txt += f"🔺 <b>Kurs:</b> {data['course_number']}\n"
-        txt += f"👥  <b>Guruh:</b> {data['academic_group']}\n"
-        txt += f"⚖️ <b>GPA:</b> {data['gpa']}"
-        await message.answer(f"<b>🎓 Talaba haqida ma'lumot:</b>\n\n{txt}", reply_markup=user_menu_func("student"))
-    else:
-        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+    try:
+        user = db.select_tift_user(user_id=message.from_user.id)  
+        token = user[8]
+        data = get_student(token=token)
+        if data:
+            txt = f"🎓 <b>Talaba:</b> {data['full_name']}\n"
+            txt += f"🏛 <b>Yo'nalish:</b> {data['direction']}\n"
+            txt += f"💲 <b>Kontrak miqdori:</b> {data['direction_contract']}\n"
+            txt += f"🔺 <b>Kurs:</b> {data['course_number']}\n"
+            txt += f"👥  <b>Guruh:</b> {data['academic_group']}\n"
+            txt += f"⚖️ <b>GPA:</b> {data['gpa']}"
+            await message.answer(f"<b>🎓 Talaba haqida ma'lumot:</b>\n\n{txt}", reply_markup=user_menu_func("student"))
+        else:
+            await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+    except:
+        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi(error)")
 
 
 

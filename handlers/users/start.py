@@ -17,17 +17,20 @@ from handlers.users.help import IsTiftUser
 
 @dp.message_handler(CommandStart(), state="*")
 async def bot_start(message: types.Message, state=FSMContext):
-    if message.text == "/start":
-        user_id = message.from_user.id    
-        await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
-    else:
-        book_slug = message.text.split(" ")[-1]
-        book = get_book(book_slug)
-      
-        if book[1]:
-            # await message.answer_photo(types.InputFile.from_url(book[0]+book[1]['photo']), caption=f"<`b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
-            await message.answer_document(types.InputFile.from_url(book[0]+book[1]['file']), caption=f"<b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
-    await state.finish()
+    try:
+        if message.text == "/start":
+            user_id = message.from_user.id    
+            await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
+        else:
+            book_slug = message.text.split(" ")[-1]
+            book = get_book(book_slug)
+        
+            if book[1]:
+                # await message.answer_photo(types.InputFile.from_url(book[0]+book[1]['photo']), caption=f"<`b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
+                await message.answer_document(types.InputFile.from_url(book[0]+book[1]['file']), caption=f"<b>{book[1]['title']}</b>\n\n{book[1]['description']}", reply_markup=login_menu(user=IsTiftUser(message.from_user.id)))
+        await state.finish()
+    except:
+        await message.answer("Xush kelibsiz!", reply_markup=login_menu())
     
     # all = db.select_user_all_data(telegram_id=message.from_user.id)
     # await message.answer(all)
