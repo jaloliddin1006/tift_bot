@@ -8,7 +8,7 @@ from loader import dp, db, bot
 import uuid
 
 
-@dp.message_handler(text = '📨 Xabar yozish 2')
+@dp.message_handler(text = '📨 Xabar yozish')
 async def message_write(message: types.Message, state: FSMContext):
     user = db.select_new_message(telegram_id=message.from_user.id)
     if user:

@@ -29,112 +29,115 @@ async def bot_start(message: types.Message):
 @dp.message_handler(text = "🎞 Video Qo'llanma")
 async def bot_start(message: types.Message):
     user = db.select_tift_user(user_id=message.from_user.id)
-    await message.answer(f"<b>{user[5]}</b> roliga tegishli video qo'llanma.")    
-    if user:
-        video = get_video_source(user[8])
-        # 
+    await message.answer(f"<b>{user[5]}</b> roliga tegishli video qo'llanma hozirda mavjud emas.")    
+    # if user:
+    #     video = get_video_source(user[8])
+    #     # 
         
-        await message.answer(video)
+    #     await message.answer(video)
     
-    
+
 @dp.message_handler(text = "📚 Meni Fanlarim")
 async def bot_start(message: types.Message):
     user = db.select_tift_user(user_id=message.from_user.id)  
     token = user[8]
     data = get_student_sciences(token)
+    
     if data:
-        txt = f"🎓 <b>Talaba:</b> {data['student']}\n"
-        sciences = "\n"
-        for science in data['sciences']:
-            part = f"\n📗<b>  Fan: {science['name']}</b>\n"
-            part += f"🧮<b>  NB: </b>{science['nb_count']}\n"
-            for group in science['groups']:
-                gr = f"     👥 <b>Guruh:</b> {group['name']}\n"
-                gr += f"     ✍🏻 <b>Turi:</b> {group['science_type']}\n"
-                gr += f"     👩‍🏫 <b>O'qituvchi:</b> {group['teacher']}\n\n"
-                part += gr
-            sciences += part
-            sciences += "\n"
-        await message.answer("      📚 Meni Fanlarim\n"+txt+sciences)
-        
+        try:
+            txt = f"🎓 <b>Talaba:</b> {data['student']}\n"
+            sciences = "\n"
+            for science in data['sciences']:
+                part = f"\n📗<b>  Fan: {science['name']}</b>\n"
+                part += f"🧮<b>  NB: </b>{science['nb_count']}\n"
+                for group in science['groups']:
+                    gr = f"     👥 <b>Guruh:</b> {group['name']}\n"
+                    gr += f"     ✍🏻 <b>Turi:</b> {group['science_type']}\n"
+                    gr += f"     👩‍🏫 <b>O'qituvchi:</b> {group.get('teacher')}\n\n"
+                    part += gr
+                sciences += part
+                sciences += "\n"
+            await message.answer("      📚 Meni Fanlarim\n"+txt+sciences)
+        except:
+            await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi(error)")
     else:
         await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
 
 
 @dp.message_handler(text = "📆 Dars jadvalim")
 async def bot_start(message: types.Message):
-    # user = db.select_tift_user(user_id=message.from_user.id) 
-    # token = user[8]
-    # data = get_student_schedule(token)
-    # # print("data: ", data)
-    # # sorted_data = sorted(data, key=lambda x: x['start'])
+    user = db.select_tift_user(user_id=message.from_user.id) 
+    token = user[8]
+    data = get_student_schedule(token)
+    # print("data: ", data)
+    # sorted_data = sorted(data, key=lambda x: x['start'])
     
-    # if data:
-    #     for i in data['results']:
-    #         print(i)
-    #         print("---------------------------------------------"*2)
-    #     dayys = {
-    #         'Monday': 'Dushanba',
-    #         'Tuesday': 'Seshanba',
-    #         'Wednesday': 'Chorshanba',
-    #         'Thursday': 'Payshanba',
-    #         'Friday': 'Juma',
-    #         'Saturday': 'Shanba',
-    #         'Sunday': 'Yakshanba'
-    #     }
-    #     week = ""
-    #     for para in data:
-    #         day_data = ""
-    #         para_num = para['name']
-    #         start = para['start_time']
-    #         end = para['end_time']
-            
-    #         for day in para['timetible']:
-    #             week_day = dayys[day['weekday']]
-    #             lessons = ""
-    #             if day['groups']:
-    #                 for lesson in day['groups']:
-    #                     group = lesson['group']
-    #                     room = lesson['room']
-    #                     science = lesson['science']
-    #                     group_type = lesson['group_type']
-    #                 lesson += f"👥 <b>Patok:</b> {group}\n"
-    #                 lesson += f"🏢 <b>Xona:</b> {room}\n"
-    #                 lesson += f"📗 <b>Fan:</b> {science}\n"
-    #                 lesson += f"✍🏻 <b>Turi:</b> {group_type}\n\n"
-                    
-                    
-                    
-                
+    if data:
         
-    #     #     today = datetime.datetime.strptime(str(table['start']), "%Y-%m-%dT%H:%M:%S" )
-            
-    #         # weekday = dayys[]
-    #     #     room = table['title'].split()[-1]
-    #     #     group = table['title'].split()[-2]
-    #     #     para = table['para']
-    #     #     science = " ".join(table['title'].split(" ")[0:-3])
-            
-    #     #     schedule_table = ""
-            
-    #     #     if week == weekday:
-    #     #         pass
-    #     #     else:
-    #     #         week = weekday
-    #     #         schedule_table += f"              <b> ||    {week}     ||</b>\n"
-    #     #     schedule_table += f"⏲ <b>Para:</b> {para}\n"
-    #     #     schedule_table += f"🏢 <b>Xona:</b> {room}\n"
-    #     #     schedule_table += f"👥 <b>Patok:</b> {group}\n"
-    #     #     schedule_table += f"📗 <b>Fan:</b> {science}\n\n"
-            
-    #     #     day += schedule_table 
-        
-        
-    #     await message.answer("       📆 Dars jadvalim \n\n"+day)
+        # Define a dictionary to map weekdays to their respective names in your language
+        dayys = {
+            'Monday': 'Dushanba',
+            'Tuesday': 'Seshanba',
+            'Wednesday': 'Chorshanba',
+            'Thursday': 'Payshanba',
+            'Friday': 'Juma',
+            'Saturday': 'Shanba',
+            'Sunday': 'Yakshanba'
+        }
 
-        
-    # else:
-    await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
+        ddy = {
+            
+            'Monday': {},
+            'Tuesday': {},
+            'Wednesday': {},
+            'Thursday': {},
+            'Friday': {},
+            'Saturday': {},
+            'Sunday': {}
+            
+        }
+
+        # Initialize a dictionary to store lessons for Monday
+        lessons_by_day = ddy.copy()
+        for para in data['results']:
+            
+            for day in para['timetable']:
+                # if day['weekday'] == 'Monday':
+                lessons_by_day[day['weekday']][para['name']] = day['groups']
+
+        # Print the formatted schedule for Monday
+        # print("Dushanba kuniga tegishli fanlar:")
+        week_schedule = ""
+        for i,j in lessons_by_day.items():
+            # if j['groups']:
+            # print(f"{i} kuniga tegishli fanlar:")
+            # print(j)
+            daily_lesson = ""
+            for para_num, groups in j.items():
+                lesson = ""
+                if groups:
+                    start_time = next((para['start_time'] for para in data['results'] if para['name'] == para_num), '')
+                    end_time = next((para['end_time'] for para in data['results'] if para['name'] == para_num), '')
+                    
+                    lesson += f"{para_num} - para : {start_time} - {end_time}\n"
+                    for group in groups:
+                        name = group['group']
+                        room = group['room']
+                        science = group['science']
+                        group_type = group['group_type']
+                        lesson += f"👥 <b>Patok:</b> {name}\n"
+                        lesson += f"🏢 <b>Xona:</b> {room}\n"
+                        lesson += f"📗 <b>Fan:</b> {science}\n"
+                        lesson += f"✍🏻 <b>Turi:</b> {group_type}\n\n"
+                    # print(lesson)
+                if lesson:
+                    daily_lesson += lesson
+            if daily_lesson:
+                week_schedule += f"{dayys[i]} kuniga tegishli fanlar:\n{daily_lesson}\n"
+        await message.answer("       📆 Dars jadvalim \n\n"+week_schedule)
+
+    else:
+        await message.answer("Biroz kuting tez orada ma'lumotlar qo'shiladi...")
 
 # {'results': {'monday': [{'id': 3, 'group': 'INM-001', 'room': 'A-302', 'group_type': 'lecture', 'group_science': 'Iqtisodiyot nazariyasi', 'updated_at': '2023-08-25T16:48:50.670631+05:00', 'created_at': '2023-08-25T16:48:50.670678+05:00', 'weekday': 'monday', 'types': 'full', 'para': 3, 'semester': 2}], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [{'id': 4, 'group': 'IUMM-001-L1', 'room': 'A-300', 'group_type': 'practical', 'group_science': 'Iqtisodchilar uchun matematika', 'updated_at': '2023-08-25T20:23:44.791512+05:00', 'created_at': '2023-08-25T20:23:44.791549+05:00', 'weekday': 'friday', 'types': 'full', 'para': 1, 'semester': 2}], 'saturday': []}}
 @dp.message_handler(text = "⚠️ Topshirilmagan vazifalarim")
@@ -209,9 +212,9 @@ async def bot_start(message: types.Message):
     if data:
         txt = f"🎓 <b>Talaba:</b> {data['full_name']}\n"
         txt += f"🏛 <b>Yo'nalish:</b> {data['direction']}\n"
+        txt += f"💲 <b>Kontrak miqdori:</b> {data['direction_contract']}\n"
         txt += f"🔺 <b>Kurs:</b> {data['course_number']}\n"
         txt += f"👥  <b>Guruh:</b> {data['academic_group']}\n"
-        txt += f"👤 <b>Tyutor:</b> {data['tutor']}\n"
         txt += f"⚖️ <b>GPA:</b> {data['gpa']}"
         await message.answer(f"<b>🎓 Talaba haqida ma'lumot:</b>\n\n{txt}", reply_markup=user_menu_func("student"))
     else:

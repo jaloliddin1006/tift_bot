@@ -60,10 +60,10 @@ def get_student(token):
         get_data = json.loads(get_me.text)['result']
         full_name = get_data['full_name']
         direction = get_data['direction']
+        direction_contract = get_data['direction_contract']
         birthday = get_data['birthday']
         course_number = get_data['course_number']
         academic_group = get_data['academic_group']
-        tutor = get_data['tutor']
         rating_notebook = get_data['rating_notebook']
         try:
             gpa = get_data['gpa', 0] 
@@ -73,10 +73,10 @@ def get_student(token):
         context = {
             'full_name':full_name,
             'direction':direction,
+            "direction_contract":direction_contract,
             'birthday':birthday,
             'course_number':course_number,
             'academic_group':academic_group,
-            'tutor':tutor,
             'rating_notebook':rating_notebook,
             'gpa':gpa,
         }
@@ -264,4 +264,30 @@ def get_qrcodes():
 
 
 
+
+a = get_student("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk3OTc4MjAzLCJpYXQiOjE2OTc4OTE4MDMsImp0aSI6Ijg2ZTdhYmU4YWE2OTRiYzlhNmVjNTZhZDNkOWQ2NGNlIiwidXNlcl9pZCI6MzA5NDJ9.uCuSbQReZUGFaCuE36L5UhNRJwlkh6T1b-9v2fxL5W0")
+
+print(a)
+
+##    my sciences
+# data =     {'student': "SAIDISLOMBEK ESHDAVLATOV G'ULOM O'G'LI", 
+#     'sciences': [{
+#         'id': 79, 
+#         'name': 'Iqtisodiy siyosatga kirish ', 
+#         'nb_count': 0, 'groups': [{'id': 346, 'name': 'IS 22-20 , IS 22-21 INTEP6', 'teacher': 'Umid Otajanov Abdullayevich', 'science_type': 'lecture'}, 
+#                                 {'id': 347, 'name': 'IS 22-20 INTEP6-P', 'teacher': 'Naima Isakova Ikromjonovna', 'science_type': 'practical'}]}, 
+#         {'id': 77, 
+#         'name': 'Institusional iqtisodiyot ', 
+#         'nb_count': 0, 'groups': [{'id': 355, 'name': 'IS 22-20 , IS 22-21 INSECO4', 'teacher': 'Saida Abduraximova  Axmadjanovna', 'science_type': 'lecture'}, 
+#                                 {'id': 356, 'name': 'IS 22-20 INSECO4-P', 'teacher': 'Ayxanum Yaxshimuratova Rustamovna', 'science_type': 'practical'}]}, 
+#         {'id': 80, 
+#         'name': 'Mikroiqtisodiyot', 
+#         'nb_count': 0, 'groups': [{'id': 352, 'name': 'IS 22-20 , IS 22-21 MICRO6', 'teacher': 'Dilora Abdullayeva  Quysunovna', 'science_type': 'lecture'}, 
+#                                 {'id': 353, 'name': 'IS 22-20 MICRO6-P', 'teacher': "Muxtorbek Rahimboyev Ikrom o'g'li", 'science_type': 'practical'}]}, 
+#         {'id': 78, 
+#         'name': 'Atrof-muhit va tabiiy resurslar iqtisodiyoti', 
+#         'nb_count': 0, 'groups': [{'id': 343, 'name': 'IS 22-20 , IS 22-21 ENVNRE6', 'teacher': 'BOBOJONOV BAXROMBEK RUZIMOVICH', 'science_type': 'lecture'}, 
+#                                 {'id': 344, 'name': 'IS 22-20 ENVNRE6-P', 'science_type': 'practical'}]}]}
+    
+ 
 
