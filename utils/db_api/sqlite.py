@@ -69,7 +69,17 @@ class Database:
             );
 """
         self.execute(sql, commit=True)
-
+        
+    def create_table_new_messages(self):
+        sql = """
+        CREATE TABLE NewMessages(
+            telegram_id integer NOT NULL,
+            full_name varchar(255) NOT NULL,
+            nick_name varchar(225),
+            phone varchar(25),
+            );
+"""
+        self.execute(sql, commit=True)
     def create_table_channels(self):
         sql = """
         CREATE TABLE Channels (
@@ -102,6 +112,12 @@ class Database:
         """
         self.execute(sql, parameters=(telegram_id, name, msg_id), commit=True)
 
+    def add_new_message(self, telegram_id: int, full_name: str, nick_name: str, phone: str):
+        sql = """
+        INSERT INTO NewMessages(telegram_id, full_name, nick_name, phone) VALUES(?, ?, ?, ?)
+        """
+        self.execute(sql, parameters=(telegram_id, full_name, nick_name, phone), commit=True)
+
     def add_tift_user(self, lms_id, user_id, username, full_name, role, token):
         sql = " INSERT INTO  TiftUsers(lms_id, user_id, username, full_name, role, token, join_date) VALUES(?, ?, ?, ?, ?, ?, datetime('now'))"
         self.execute(sql, parameters=(lms_id, user_id, username, full_name, role, token), commit=True)
@@ -118,6 +134,11 @@ class Database:
     
     def select_message(self, **kwargs):
         sql = f"SELECT * FROM Messages WHERE "
+        sql, parameters = self.format_args(sql, kwargs)
+        return self.execute(sql, parameters=parameters, fetchone=True)
+    
+    def select_new_message(self, **kwargs):
+        sql = f"SELECT * FROM NewMessages WHERE "
         sql, parameters = self.format_args(sql, kwargs)
         return self.execute(sql, parameters=parameters, fetchone=True)
     
@@ -145,6 +166,12 @@ class Database:
         UPDATE BotUsers SET language=? WHERE telegram_id=?
         """
         return self.execute(sql, parameters=(lang, user_id), commit=True)
+
+    def update_new_message(self, nick_name, user_id):
+        sql = f"""
+        UPDATE NewMessages SET nick_name=? WHERE telegram_id=?
+        """
+        return self.execute(sql, parameters=(nick_name, user_id), commit=True)
 
     def select_user_all_data(self, **kwargs):
         sql = f"SELECT * FROM BotUsers INNER JOIN TiftUsers ON BotUsers.telegram_id = TiftUsers.user_id WHERE "

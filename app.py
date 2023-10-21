@@ -13,10 +13,11 @@ async def on_startup(dispatcher):
 
     # Ma'lumotlar bazasini yaratamiz:
     try:
+        db.create_table_new_messages()
         db.create_table_users()
         db.create_table_tiftusers()
         # db.drop_message()
-        db.create_table_messages()
+        # db.create_table_messages()
         # db.drop_channels()
         db.create_table_channels()
         pass
