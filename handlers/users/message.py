@@ -8,6 +8,23 @@ from loader import dp, db, bot
 import uuid
 
 
+
+    
+@dp.message_handler(text = "❓ Bugalteriyaga oid savollar")
+async def input_login(message: types.Message, state: FSMContext):
+    
+    await message.answer("Bugalteriyaga oid qandaydir savollaringiz yoki bugalteriyaga bilan bo'g'liq muammoingiz bo'lsa yozishingiz mumkin", reply_markup=types.ReplyKeyboardRemove())
+    
+    await state.set_state("bugalteriya_message")
+    
+
+@dp.message_handler(state="bugalteriya_message", content_types=types.ContentType.ANY)
+async def get_bugalteriya_message(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    await message.forward(chat_id='-1002087698683')
+    await message.answer(f"Xabaringiz bugalteriya xodimlariga yuborildi ✅, \nXabaringizga tez orada javob beramiz.", reply_markup=login_menu(user=IsTiftUser(user_id)))
+    await state.finish()
+
 @dp.message_handler(text = '📨 Xabar yozish')
 async def message_write(message: types.Message, state: FSMContext):
     user = db.select_new_message(telegram_id=message.from_user.id)

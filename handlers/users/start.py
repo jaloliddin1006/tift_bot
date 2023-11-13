@@ -43,15 +43,6 @@ async def bot_start(message: types.Message, state=FSMContext):
     # await message.answer(all)
 
 
-    
-@dp.message_handler(text = "❓ Bugalteriya boyicha savollar guruhi")
-async def input_login(message: types.Message, state: FSMContext):
-    link = "https://t.me/+wjuwRSjyJn9kZDJi"
-    group_btn = types.InlineKeyboardMarkup(row_width=1)
-    group_btn.add(types.InlineKeyboardButton(text="📲 Bugalteriya boyicha savollar guruhi", url=link))
-    await message.answer("Bugalteriyaga oid qandaydir savollaringiz yoki bugalteriyaga bilan bo'g'liq muammoingiz bo'lsa ushbu guruhga kirib, muammoingizga yechim topishingiz mumkin")
-
-
 # @dp.message_handler()
 # async def bot_start(message: types.Message):
 #     msgs = await message.answer("OK!")

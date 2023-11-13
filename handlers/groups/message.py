@@ -6,17 +6,20 @@ from filters.group_chat import IsGroup
 
 @dp.message_handler(text="/about", chat_type=[types.ChatType.SUPERGROUP, types.ChatType.GROUP], )
 async def get_about(message: types.Message):
-    if message.reply_to_message:
-        if message.reply_to_message.forward_sender_name:
-            user_ = db.select_bot_user(name=message.reply_to_message.forward_sender_name)
-            user = db.select_new_message(nick_name=message.reply_to_message.forward_sender_name)
+    try:
+        if message.reply_to_message:
+            if message.reply_to_message.forward_sender_name:
+                user_ = db.select_bot_user(name=message.reply_to_message.forward_sender_name)
+                user = db.select_new_message(nick_name=message.reply_to_message.forward_sender_name)
+            else:
+                user_ = db.select_bot_user(telegram_id=message.reply_to_message.forward_from.id)
+                user = db.select_new_message(telegram_id=message.reply_to_message.forward_from.id)
+            await message.reply(f"User haqida ma'lumotlar:\n\nTelegram ID: {user[0]}\nNick Name: {user[2]}\nFull Name: {user[1]}\nUsername: @{user_[3]}\nTelefon: {user[3]}")
         else:
-            user_ = db.select_bot_user(telegram_id=message.reply_to_message.forward_from.id)
-            user = db.select_new_message(telegram_id=message.reply_to_message.forward_from.id)
-        await message.reply(f"User haqida ma'lumotlar:\n\nTelegram ID: {user[0]}\nNick Name: {user[2]}\nFull Name: {user[1]}\nUsername: @{user_[3]}\nTelefon: {user[3]}")
-    else:
-        await message.reply("Biror xabarni 'reply' qilib /about buyrug'ini kiriting:")
-
+            await message.reply("Biror xabarni 'reply' qilib /about buyrug'ini kiriting:")
+    except Exception as err:
+        # await message.reply(f"Xatolik: {err}")
+        pass
 
 @dp.message_handler(chat_type=[types.ChatType.SUPERGROUP, types.ChatType.GROUP], content_types=types.ContentTypes.ANY)
 async def answer_message(message: types.Message):
