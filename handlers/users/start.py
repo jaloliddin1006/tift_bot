@@ -6,10 +6,10 @@ from data.api import login_user
 
 from data.config import ADMINS
 from loader import dp, db, bot
-from data.api import get_book
+from data.api import get_book, get_library_category, get_books
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import Command
-from keyboards.default.defoult_btn import login_menu, back_btn  
+from keyboards.default.defoult_btn import login_menu, back_btn, get_book_category_btn  
 from keyboards.inline.inline_btn import language_btn, lang_code, check_member_button
 from handlers.users.help import IsTiftUser
 
@@ -21,6 +21,13 @@ async def bot_start(message: types.Message, state=FSMContext):
         if message.text == "/start":
             user_id = message.from_user.id    
             await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
+        elif message.text == "/start=botlibrary":
+            books_category = get_library_category()
+            if books_category:
+                await message.answer("Kutubxona bo'limi. Kerakli bo'limni tanlang.", reply_markup=get_book_category_btn(books_category))
+                await state.set_state("book_category")
+            else:
+                await message.answer("Kutubxona mavjud emas", reply_markup=login_menu(user=IsTiftUser(user_id)))
         else:
             book_slug = message.text.split(" ")[-1]
             book = get_book(book_slug)
@@ -35,6 +42,14 @@ async def bot_start(message: types.Message, state=FSMContext):
     # all = db.select_user_all_data(telegram_id=message.from_user.id)
     # await message.answer(all)
 
+
+    
+@dp.message_handler(text = "❓ Bugalteriya boyicha savollar guruhi")
+async def input_login(message: types.Message, state: FSMContext):
+    link = "https://t.me/+wjuwRSjyJn9kZDJi"
+    group_btn = types.InlineKeyboardMarkup(row_width=1)
+    group_btn.add(types.InlineKeyboardButton(text="📲 Bugalteriya boyicha savollar guruhi", url=link))
+    await message.answer("Bugalteriyaga oid qandaydir savollaringiz yoki bugalteriyaga bilan bo'g'liq muammoingiz bo'lsa ushbu guruhga kirib, muammoingizga yechim topishingiz mumkin", reply_markup=group_btn)
 
 
 # @dp.message_handler()

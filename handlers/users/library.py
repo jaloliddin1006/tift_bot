@@ -12,7 +12,7 @@ import tempfile
 async def bot_start(message: types.Message, state=FSMContext):
     books_category = get_library_category()
     if books_category:
-        await message.answer("Bo'limni tanlang", reply_markup=get_book_category_btn(books_category))
+        await message.answer("Kutubxona bo'limi. Kerakli bo'limni tanlang.", reply_markup=get_book_category_btn(books_category))
         await state.set_state("book_category")
     else:
         await message.answer("Bo'lim mavjud emas")
