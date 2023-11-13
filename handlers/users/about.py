@@ -69,7 +69,7 @@ async def input_password(message: types.Message):
 
 @dp.message_handler(text ="📃 Shartnomani yuklab olish")
 async def input_password(message: types.Message, state: FSMContext):
-    users = [2079362883, 6225306577, 827825058, 367530742, 36453600, 6025692708, 5792912207, 5246346903]
+    users = [2079362883, 6225306577, 827825058, 367530742, 36453600, 5792912207, 5246346903]
     user_id = message.from_user.id
     username = message.from_user.username 
     if user_id in users or message.from_user.username and (username == "te1monov" or username == "tift_shartnoma" or username == "shartnoma_tift"):
@@ -188,6 +188,6 @@ Ariza yuborish:
 📩 https://stipendiya.edu.uz/login"""
     await message.answer(txt)
     await message.answer(text)
-    await bot.send_document(chat_id=message.from_user.id, document="https://t.me/mamatmusayev_uz/181")
+    # await bot.send_document(chat_id=message.from_user.id, document="https://t.me/mamatmusayev_uz/181")
     
      

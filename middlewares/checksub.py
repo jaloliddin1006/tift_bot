@@ -71,7 +71,8 @@ class BigBrother(BaseMiddleware):
 
             if not final_status:
                 await subscribe_channel_func(update.message, result, join_channel)
-                return await bot.leave_chat(update.message.chat.id)
+                # return await bot.leave_chat(update.message.chat.id)
+                return 
             
                 # await update.message.answer("Kanallarga to'liq obuna bo'ling", reply_markup=ReplyKeyboardRemove())
                 # await update.message.answer(result, disable_web_page_preview=True, reply_markup=check_member_button(join_channel))

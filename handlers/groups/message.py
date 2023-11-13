@@ -18,7 +18,7 @@ async def get_about(message: types.Message):
         await message.reply("Biror xabarni 'reply' qilib /about buyrug'ini kiriting:")
 
 
-@dp.message_handler(chat_type=[types.ChatType.SUPERGROUP, types.ChatType.GROUP], content_types=types.ContentType.ANY)
+@dp.message_handler(chat_type=[types.ChatType.SUPERGROUP, types.ChatType.GROUP], content_types=types.ContentTypes.ANY)
 async def answer_message(message: types.Message):
     if message.reply_to_message:
         try:
@@ -26,8 +26,8 @@ async def answer_message(message: types.Message):
                 user = db.select_new_message(nick_name=message.reply_to_message.forward_sender_name)
             else:
                 user = db.select_new_message(telegram_id=message.reply_to_message.forward_from.id)
-            await bot.send_message(chat_id=user[1], text="Sizga javob keldi:")
-            await message.send_copy(chat_id=user[1])
+            await bot.send_message(chat_id=user[0], text="Sizga javob keldi:")
+            await message.send_copy(chat_id=user[0])
             await message.reply("Xabar yuborildi ✅")
         except Exception as err:
             pass

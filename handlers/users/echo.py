@@ -23,16 +23,16 @@ async def bot_echo(message: types.Message):
 async def subscribe_channel_func(message, result, join_channel):
     await message.answer("Kanallarga to'liq obuna bo'ling", reply_markup=types.ReplyKeyboardRemove())
     await message.answer(result, disable_web_page_preview=True, reply_markup=check_member_button(join_channel))
-    
-    chat = await bot.get_chat('@new_bot_test_group')
+    return
+    # chat = await bot.get_chat('@new_bot_test_group')
     #    user = await bot.get_chat_member(chat_id="@new_bot_test_group", user_id=message.from_user.id)
-    isuser = await bot.get_chat_member(chat_id="-1001704364861", user_id=message.from_user.id) #status owner, administrator, member
-    invite_link = await chat.export_invite_link()
-    invite_link = chat['invite_link']
-    print(chat)
-    await message.answer(isuser)
-    status = await bot.get_chat_member("-1001704364861", message.from_user.id)
-    member_count = await bot.get_chat_member_count(chat_id=chat.id) ## member count
+    # isuser = await bot.get_chat_member(chat_id="-1001704364861", user_id=message.from_user.id) #status owner, administrator, member
+    # invite_link = await chat.export_invite_link()
+    # invite_link = chat['invite_link']
+    # print(chat)
+    # # await message.answer(isuser)
+    # status = await bot.get_chat_member("-1001704364861", message.from_user.id)
+    # member_count = await bot.get_chat_member_count(chat_id=chat.id) ## member count
     
     
     # await message.answer(message.text)

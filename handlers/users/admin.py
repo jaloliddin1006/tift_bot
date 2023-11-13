@@ -216,7 +216,7 @@ async def send_ad_to_all(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state="text_all_message")
 async def send_message(message: types.Message, state: FSMContext):
-    all_users = db.select_all_users("BotUsers")
+    all_users = db.select_all_users("BotUsers")[15:]
     failed_users = 0
     try:
         for user in all_users:
@@ -359,7 +359,7 @@ async def forward_post(message: types.Message, state=FSMContext):
     # print(post_id, channel)
     
     # # forward message to users 
-    all_users = db.select_all_users("BotUsers")
+    all_users = db.select_all_users("BotUsers")[15:]
     failed_users = 0
     
     for user in all_users:
