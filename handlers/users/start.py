@@ -21,7 +21,7 @@ async def bot_start(message: types.Message, state=FSMContext):
         if message.text == "/start":
             user_id = message.from_user.id    
             await message.answer("Xush kelibsiz!", reply_markup=login_menu(user=IsTiftUser(user_id)))
-        elif message.text == "/start=botlibrary":
+        elif message.text == "/start botlibrary":
             books_category = get_library_category()
             if books_category:
                 await message.answer("Kutubxona bo'limi. Kerakli bo'limni tanlang.", reply_markup=get_book_category_btn(books_category))

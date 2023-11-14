@@ -32,7 +32,7 @@ def login_menu(user=False, tg_id=None):
             ],
             loginusermenu,
             [
-                KeyboardButton(text="❓ Bugalteriya boyicha savollar guruhi"),           
+                KeyboardButton(text="❓ Bugalteriyaga oid savollar"),           
                 
             ],
             [

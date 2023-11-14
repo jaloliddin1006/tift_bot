@@ -16,7 +16,7 @@ async def input_login(message: types.Message, state: FSMContext):
     
     user = db.select_new_message(telegram_id=message.from_user.id)
     if user:
-        await message.answer("Bugalteriyaga oid qandaydir savollaringiz yoki bugalteriyaga bilan bo'g'liq muammoingiz bo'lsa yozishingiz mumkin", reply_markup=types.ReplyKeyboardRemove())
+        await message.answer("Bugalteriyaga oid qandaydir savollaringiz yoki bugalteriyaga bilan bo'g'liq muammoingiz bo'lsa yozishingiz mumkin. Xabaringizni to'liq qilib bitta xabarda ko'rsating \n\n<i>(ruxsat:  video, audio, rasm, matn)</i>", reply_markup=types.ReplyKeyboardRemove())
         await state.set_state("message")
     else:
         await message.answer("Ism Familiyangizni yuboring", reply_markup=back_btn)
