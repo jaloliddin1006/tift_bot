@@ -12,21 +12,26 @@ import uuid
     
 @dp.message_handler(text = "❓ Bugalteriyaga oid savollar")
 async def input_login(message: types.Message, state: FSMContext):
+    await state.update_data(type="bugalteriya")
     
-    await message.answer("Bugalteriyaga oid qandaydir savollaringiz yoki bugalteriyaga bilan bo'g'liq muammoingiz bo'lsa yozishingiz mumkin", reply_markup=types.ReplyKeyboardRemove())
-    
-    await state.set_state("bugalteriya_message")
-    
+    user = db.select_new_message(telegram_id=message.from_user.id)
+    if user:
+        await message.answer("Bugalteriyaga oid qandaydir savollaringiz yoki bugalteriyaga bilan bo'g'liq muammoingiz bo'lsa yozishingiz mumkin", reply_markup=types.ReplyKeyboardRemove())
+        await state.set_state("message")
+    else:
+        await message.answer("Ism Familiyangizni yuboring", reply_markup=back_btn)
+        await state.set_state("full_name")
 
-@dp.message_handler(state="bugalteriya_message", content_types=types.ContentType.ANY)
-async def get_bugalteriya_message(message: types.Message, state: FSMContext):
-    user_id = message.from_user.id
-    await message.forward(chat_id='-1002087698683')
-    await message.answer(f"Xabaringiz bugalteriya xodimlariga yuborildi ✅, \nXabaringizga tez orada javob beramiz.", reply_markup=login_menu(user=IsTiftUser(user_id)))
-    await state.finish()
+# @dp.message_handler(state="bugalteriya_message", content_types=types.ContentType.ANY)
+# async def get_bugalteriya_message(message: types.Message, state: FSMContext):
+#     user_id = message.from_user.id
+#     await message.forward(chat_id='-1002087698683')
+#     await message.answer(f"Xabaringiz bugalteriya xodimlariga yuborildi ✅, \nXabaringizga tez orada javob beramiz.", reply_markup=login_menu(user=IsTiftUser(user_id)))
+#     await state.finish()
 
 @dp.message_handler(text = '📨 Xabar yozish')
 async def message_write(message: types.Message, state: FSMContext):
+    await state.update_data(type="message")
     user = db.select_new_message(telegram_id=message.from_user.id)
     if user:
         await message.answer("Murojaatingizni bitta xabarda to'liq aks ettiring(rasm, audio, video, matn)", reply_markup=types.ReplyKeyboardRemove())
@@ -80,8 +85,13 @@ async def get_phone(message: types.Message, state: FSMContext):
 @dp.message_handler(state="message", content_types=types.ContentType.ANY)
 async def send_message(message: types.Message, state: FSMContext):
     user_id = message.from_user.id  
-
-    await message.forward(chat_id=GroupID, message_thread_id=828)
+    type_ = await state.get_data()
+    type_ = type_['type']
+    if type_ == "message":
+        await message.forward(chat_id=GroupID, message_thread_id=828)
+    else:
+        await message.forward(chat_id='-1002087698683')
+        
     db.update_new_message(nick_name=message.from_user.full_name, user_id=user_id)
     
     await message.answer(f"Xabaringiz yuborildi ✅, \nXabaringizga tez orada javob beramiz.", reply_markup=login_menu(user=IsTiftUser(user_id)))
